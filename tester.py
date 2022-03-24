@@ -1,9 +1,11 @@
 from tgbot import bot
+from sys import argv
 
-token="5142944050:AAHmtV0znSTMyPZA92w1XMdhO26jkKTi98Y"
+token=argv[1]
+print(token)
 proxy="localhost:7890"
 
 # proxy is optional
 s=bot(token,proxy)
 
-print(s.getMe())
+print(s.getMe()) 
