@@ -8,7 +8,7 @@ def __post__(url, command, params, proxy):
             raise Exception("404 not found")
         return r.content
     except:
-        raise Exception("Error")
+        raise Exception("Network Error")
 
 def post(bot, command, params = ""):
     return __post__( bot.__getUrl__(), command, params, bot.__getProxy__() )
