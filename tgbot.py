@@ -1,17 +1,5 @@
-import requests
+from poster import post, comfirm_params
 import json
-
-def __post__(url, command, proxy):
-    try:
-        r = requests.get( url+command, proxies=proxy )
-        if r.status_code != 200:
-            raise Exception("404 not found")
-        return r.content
-    except:
-        raise Exception("Error")
-
-def post(bot, command):
-    return __post__( bot.__getUrl__(), command, bot.__getProxy__() )
 
 class bot:
     def __init__(self, token, proxy=""):
@@ -23,7 +11,8 @@ class bot:
         except:
             raise Exception("Can't connect telegram service or wrong token.")
 
-# private functions            
+# private functions
+       
     def __setToken__(self, token):
         self.token = token
     
@@ -40,14 +29,31 @@ class bot:
         return self.proxy
     
 # public functions
+    
+# Global settings
+
+#    def logOut(self):
+
+#    def close(self):
+
+#    def setWebhook(self, url, **argv):
+
+#    def deleteWebhook(self, url, **argv):
+
+# Update upstream messages
 
     def getMe(self):
         return json.loads( post(self, "getMe") )
     
-    # todo
-#    def logOut(self):
-    
-#    def close(self):
+    def getUpdates(self, **argv):
+        params_table = {
+            'offset'          : int,
+            'limit'           : int,
+            'timeout'         : int,
+            'allowed_updates' : list
+        }
+        comfirm_params( params_table, argv );
+        return json.loads( post(self, "getUpdates", argv) )
     
 #    def Formatting_options(self):
     
@@ -57,10 +63,11 @@ class bot:
     
 #    def getUserProfilePhotos(self):
 
-   # Send Something
-#    def sendMessage(self):
+# Send messages
+
+#    def sendMessage(self, chat_id, text, **argv):
     
-#    def sendPhoto(self):
+#    def sendPhoto(self, chat_id, photo, **argv):
     
 #    def sendAudio(self):
     
@@ -94,7 +101,8 @@ class bot:
     
 #    def stopMessageLiveLocation(self):
     
-   # Chat Manage
+# Chat Manage
+
 #    def banChatMember(self):
     
 #    def unbanChatMember(self):
