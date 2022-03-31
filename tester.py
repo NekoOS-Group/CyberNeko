@@ -1,24 +1,20 @@
 import requests
 from tgbot import bot
-from sys import argv
-from tgtypes import tgtype
+from tgtypes import *
 import json
 
-token=argv[1]
+token=input()
 proxy="localhost:7890"
 
 # proxy is optional
 s=bot(token,proxy=proxy)
+print( s.sendMessage( 1843952848, '@#$%\nTAT*=' ) )
+exit()
 
-#print(s.getMe())
-
-#print(json.dumps(s.__dict__)) 
-
-s = tgtype()
-
+s=tgtype()
 s.x=1
 s.y=2
-s.z=[tgtype(),tgtype()]
+s.z=[tgtype(),tgtype(),1926.0817]
 s.z[0].x=1
 s.z[0].y=2
 s.uuu='www'

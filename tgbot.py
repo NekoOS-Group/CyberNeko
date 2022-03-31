@@ -1,4 +1,5 @@
 from poster import post, comfirm_params
+from tgtypes import *
 
 class bot:
     def __init__(self, token, proxy=""):
@@ -9,6 +10,9 @@ class bot:
             self.getMe()
         except:
             raise Exception("Can't connect telegram service or wrong token.")
+    
+    def __str__(self):
+        return str(self.getMe())
 
 # private functions
        
@@ -42,7 +46,7 @@ class bot:
 # Update upstream messages
 
     def getMe(self):
-        return post(self, "getMe")
+        return User( post(self, "getMe") )
     
     def getUpdates(self, **argv):
         params_table = {
@@ -51,8 +55,8 @@ class bot:
             'timeout'         : int,
             'allowed_updates' : list
         }
-        comfirm_params( params_table, argv );
-        return post(self, "getUpdates", argv)
+        comfirm_params( params_table, argv );    
+        return [Update(x) for x in post(self, "getUpdates", argv)]
     
 #    def Formatting_options(self):
     
@@ -64,7 +68,23 @@ class bot:
 
 # Send messages
 
-#    def sendMessage(self, chat_id, text, **argv):
+    def sendMessage(self, chat_id, text, **argv):
+        params_table = {
+            'chat_id'                     : [int,str],
+            'text'                        : str,
+            'parse_mode'                  : int,
+            'entities'                    : list,
+            'disable_web_page_preview'    : bool,
+            'disable_notification'        : bool,
+            'protect_content'             : bool,
+            'reply_to_message_id'         : int,
+            'allow_sending_without_reply' : bool,
+            #'reply_markup'               : [InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove, ForceReply]
+        }
+        argv['chat_id'] = chat_id
+        argv['text']    = text
+        comfirm_params( params_table, argv );
+        return Message( post(self, 'sendMessage', argv) )
     
 #    def sendPhoto(self, chat_id, photo, **argv):
     
