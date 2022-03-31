@@ -1,12 +1,15 @@
 import requests
-import io
+import json
 
 def __post__(url, command, params, proxy):
     try:
         r = requests.get( url+command, params = params, proxies=proxy )
         if r.status_code != 200:
             raise Exception("404 not found")
-        return r.content
+        r = json.loads(r.content)
+        if not r['ok']:
+            raise Exception("Bad requests")
+        return r['result']
     except:
         raise Exception("Network Error")
 

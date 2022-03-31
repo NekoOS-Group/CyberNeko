@@ -1,5 +1,4 @@
 from poster import post, comfirm_params
-import json
 
 class bot:
     def __init__(self, token, proxy=""):
@@ -43,7 +42,7 @@ class bot:
 # Update upstream messages
 
     def getMe(self):
-        return json.loads( post(self, "getMe") )
+        return post(self, "getMe")
     
     def getUpdates(self, **argv):
         params_table = {
@@ -53,7 +52,7 @@ class bot:
             'allowed_updates' : list
         }
         comfirm_params( params_table, argv );
-        return json.loads( post(self, "getUpdates", argv) )
+        return post(self, "getUpdates", argv)
     
 #    def Formatting_options(self):
     
