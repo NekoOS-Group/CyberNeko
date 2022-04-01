@@ -1,6 +1,5 @@
 import requests
 from tgbot import bot
-from tgtypes import *
 import json
 
 token=input()

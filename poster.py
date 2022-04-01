@@ -3,7 +3,6 @@ import json
 
 def __post__(url, command, params, proxy):
     try:
-        print( url, command, params, proxy )
         r = requests.get( url+command, params = params, proxies=proxy )
         if r.status_code != 200:
             raise Exception("404 not found")
