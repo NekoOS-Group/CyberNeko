@@ -1,49 +1,12 @@
-from poster import post, comfirm_params
-from tgtypes import *
-
-class bot:
-    def __init__(self, token, proxy=""):
-        self.__setToken__(token)
-        self.__setProxy__(proxy)
-        self.url = "https://api.telegram.org/bot" + token + "/"
-        try:
-            self.getMe()
-        except:
-            raise Exception("Can't connect telegram service or wrong token.")
-    
-    def __str__(self):
-        return str(self.getMe())
-
-# private functions
-       
-    def __setToken__(self, token):
-        self.token = token
-    
-    def __setProxy__(self, proxy):
-        self.proxy = {
-            'https':proxy,
-            'http':proxy
-        }
-    
-    def __getUrl__(self):
-        return self.url
-    
-    def __getProxy__(self):
-        return self.proxy
-    
-# public functions
-    def getMe(self):
-        return User( post(self, 'getMe') )
-        
     def getUpdates(self, **argv) :
         params_table = {
             'offset'                  : int,
             'limit'                   : int,
             'timeout'                 : int,
-            'allowed_updates'         : list,
+            'allowed_updates'         : [],
         }
         comfirm_params( params_table, argv )
-        return [Update(x) for x in post(self, 'getUpdates', argv)]
+        return post(self, 'getUpdates', argv)
 
     def setWebhook(self, url, **argv) :
         params_table = {
@@ -51,7 +14,7 @@ class bot:
             'certificate'             : InputFile,
             'ip_address'              : str,
             'max_connections'         : int,
-            'allowed_updates'         : list,
+            'allowed_updates'         : [],
             'drop_pending_updates'    : bool,
         }
         argv['url'] = url
@@ -64,16 +27,13 @@ class bot:
         }
         comfirm_params( params_table, argv )
         return post(self, 'deleteWebhook', argv)
-    
-    def getWebhookInfo(self):
-        return WebhookInfo( post(self, 'getWebhookInfo') )
-        
+
     def sendMessage(self, chat_id, text, **argv) :
         params_table = {
             'chat_id'                 : [int, str],
             'text'                    : str,
             'parse_mode'              : str,
-            'entities'                : list,
+            'entities'                : [MessageEntity],
             'disable_web_page_preview' : bool,
             'disable_notification'    : bool,
             'protect_content'         : bool,
@@ -84,7 +44,7 @@ class bot:
         argv['chat_id'] = chat_id
         argv['text'] = text
         comfirm_params( params_table, argv )
-        return Message( post(self, 'sendMessage', argv) )
+        return post(self, 'sendMessage', argv)
 
     def forwardMessage(self, chat_id, from_chat_id, message_id, **argv) :
         params_table = {
@@ -98,7 +58,7 @@ class bot:
         argv['from_chat_id'] = from_chat_id
         argv['message_id'] = message_id
         comfirm_params( params_table, argv )
-        return Message( post(self, 'forwardMessage', argv) )
+        return post(self, 'forwardMessage', argv)
 
     def copyMessage(self, chat_id, from_chat_id, message_id, **argv) :
         params_table = {
@@ -107,7 +67,7 @@ class bot:
             'message_id'              : int,
             'caption'                 : str,
             'parse_mode'              : str,
-            'caption_entities'        : list,
+            'caption_entities'        : [MessageEntity],
             'disable_notification'    : bool,
             'protect_content'         : bool,
             'reply_to_message_id'     : int,
@@ -118,7 +78,7 @@ class bot:
         argv['from_chat_id'] = from_chat_id
         argv['message_id'] = message_id
         comfirm_params( params_table, argv )
-        return MessageId( post(self, 'copyMessage', argv) )
+        return post(self, 'copyMessage', argv)
 
     def sendPhoto(self, chat_id, photo, **argv) :
         params_table = {
@@ -126,7 +86,7 @@ class bot:
             'photo'                   : [InputFile, str],
             'caption'                 : str,
             'parse_mode'              : str,
-            'caption_entities'        : list,
+            'caption_entities'        : [MessageEntity],
             'disable_notification'    : bool,
             'protect_content'         : bool,
             'reply_to_message_id'     : int,
@@ -136,7 +96,7 @@ class bot:
         argv['chat_id'] = chat_id
         argv['photo'] = photo
         comfirm_params( params_table, argv )
-        return Message( post(self, 'sendPhoto', argv) )
+        return post(self, 'sendPhoto', argv)
 
     def sendAudio(self, chat_id, audio, **argv) :
         params_table = {
@@ -144,7 +104,7 @@ class bot:
             'audio'                   : [InputFile, str],
             'caption'                 : str,
             'parse_mode'              : str,
-            'caption_entities'        : list,
+            'caption_entities'        : [MessageEntity],
             'duration'                : int,
             'performer'               : str,
             'title'                   : str,
@@ -158,7 +118,7 @@ class bot:
         argv['chat_id'] = chat_id
         argv['audio'] = audio
         comfirm_params( params_table, argv )
-        return Message( post(self, 'sendAudio', argv) )
+        return post(self, 'sendAudio', argv)
 
     def sendDocument(self, chat_id, document, **argv) :
         params_table = {
@@ -167,7 +127,7 @@ class bot:
             'thumb'                   : [InputFile, str],
             'caption'                 : str,
             'parse_mode'              : str,
-            'caption_entities'        : list,
+            'caption_entities'        : [MessageEntity],
             'disable_content_type_detection' : bool,
             'disable_notification'    : bool,
             'protect_content'         : bool,
@@ -178,7 +138,7 @@ class bot:
         argv['chat_id'] = chat_id
         argv['document'] = document
         comfirm_params( params_table, argv )
-        return Message( post(self, 'sendDocument', argv) )
+        return post(self, 'sendDocument', argv)
 
     def sendVideo(self, chat_id, video, **argv) :
         params_table = {
@@ -190,7 +150,7 @@ class bot:
             'thumb'                   : [InputFile, str],
             'caption'                 : str,
             'parse_mode'              : str,
-            'caption_entities'        : list,
+            'caption_entities'        : [MessageEntity],
             'supports_streaming'      : bool,
             'disable_notification'    : bool,
             'protect_content'         : bool,
@@ -201,7 +161,7 @@ class bot:
         argv['chat_id'] = chat_id
         argv['video'] = video
         comfirm_params( params_table, argv )
-        return Message( post(self, 'sendVideo', argv) )
+        return post(self, 'sendVideo', argv)
 
     def sendAnimation(self, chat_id, animation, **argv) :
         params_table = {
@@ -213,7 +173,7 @@ class bot:
             'thumb'                   : [InputFile, str],
             'caption'                 : str,
             'parse_mode'              : str,
-            'caption_entities'        : list,
+            'caption_entities'        : [MessageEntity],
             'disable_notification'    : bool,
             'protect_content'         : bool,
             'reply_to_message_id'     : int,
@@ -223,7 +183,7 @@ class bot:
         argv['chat_id'] = chat_id
         argv['animation'] = animation
         comfirm_params( params_table, argv )
-        return Message( post(self, 'sendAnimation', argv) )
+        return post(self, 'sendAnimation', argv)
 
     def sendVoice(self, chat_id, voice, **argv) :
         params_table = {
@@ -231,7 +191,7 @@ class bot:
             'voice'                   : [InputFile, str],
             'caption'                 : str,
             'parse_mode'              : str,
-            'caption_entities'        : list,
+            'caption_entities'        : [MessageEntity],
             'duration'                : int,
             'disable_notification'    : bool,
             'protect_content'         : bool,
@@ -242,7 +202,7 @@ class bot:
         argv['chat_id'] = chat_id
         argv['voice'] = voice
         comfirm_params( params_table, argv )
-        return Message( post(self, 'sendVoice', argv) )
+        return post(self, 'sendVoice', argv)
 
     def sendVideoNote(self, chat_id, video_note, **argv) :
         params_table = {
@@ -260,12 +220,12 @@ class bot:
         argv['chat_id'] = chat_id
         argv['video_note'] = video_note
         comfirm_params( params_table, argv )
-        return Message( post(self, 'sendVideoNote', argv) )
+        return post(self, 'sendVideoNote', argv)
 
     def sendMediaGroup(self, chat_id, media, **argv) :
         params_table = {
             'chat_id'                 : [int, str],
-            'media'                   : list,
+            'media'                   : [InputMediaAudio, InputMediaDocument, InputMediaPhoto and InputMediaVideo],
             'disable_notification'    : bool,
             'protect_content'         : bool,
             'reply_to_message_id'     : int,
@@ -274,7 +234,7 @@ class bot:
         argv['chat_id'] = chat_id
         argv['media'] = media
         comfirm_params( params_table, argv )
-        return Message( post(self, 'sendMediaGroup', argv) )
+        return post(self, 'sendMediaGroup', argv)
 
     def sendLocation(self, chat_id, latitude, longitude, **argv) :
         params_table = {
@@ -295,7 +255,7 @@ class bot:
         argv['latitude'] = latitude
         argv['longitude'] = longitude
         comfirm_params( params_table, argv )
-        return Message( post(self, 'sendLocation', argv) )
+        return post(self, 'sendLocation', argv)
 
     def editMessageLiveLocation(self, latitude, longitude, **argv) :
         params_table = {
@@ -347,7 +307,7 @@ class bot:
         argv['title'] = title
         argv['address'] = address
         comfirm_params( params_table, argv )
-        return Message( post(self, 'sendVenue', argv) )
+        return post(self, 'sendVenue', argv)
 
     def sendContact(self, chat_id, phone_number, first_name, **argv) :
         params_table = {
@@ -366,20 +326,20 @@ class bot:
         argv['phone_number'] = phone_number
         argv['first_name'] = first_name
         comfirm_params( params_table, argv )
-        return Message( post(self, 'sendContact', argv) )
+        return post(self, 'sendContact', argv)
 
     def sendPoll(self, chat_id, question, options, **argv) :
         params_table = {
             'chat_id'                 : [int, str],
             'question'                : str,
-            'options'                 : list,
+            'options'                 : [],
             'is_anonymous'            : bool,
             'type'                    : str,
             'allows_multiple_answers' : bool,
             'correct_option_id'       : int,
             'explanation'             : str,
             'explanation_parse_mode'  : str,
-            'explanation_entities'    : list,
+            'explanation_entities'    : [MessageEntity],
             'open_period'             : int,
             'close_date'              : int,
             'is_closed'               : bool,
@@ -393,7 +353,7 @@ class bot:
         argv['question'] = question
         argv['options'] = options
         comfirm_params( params_table, argv )
-        return Message( post(self, 'sendPoll', argv) )
+        return post(self, 'sendPoll', argv)
 
     def sendDice(self, chat_id, **argv) :
         params_table = {
@@ -407,7 +367,7 @@ class bot:
         }
         argv['chat_id'] = chat_id
         comfirm_params( params_table, argv )
-        return Message( post(self, 'sendDice', argv) )
+        return post(self, 'sendDice', argv)
 
     def sendChatAction(self, chat_id, action, **argv) :
         params_table = {
@@ -427,7 +387,7 @@ class bot:
         }
         argv['user_id'] = user_id
         comfirm_params( params_table, argv )
-        return UserProfilePhotos( post(self, 'getUserProfilePhotos', argv) )
+        return post(self, 'getUserProfilePhotos', argv)
 
     def getFile(self, file_id, **argv) :
         params_table = {
@@ -435,7 +395,7 @@ class bot:
         }
         argv['file_id'] = file_id
         comfirm_params( params_table, argv )
-        return File( post(self, 'getFile', argv) )
+        return post(self, 'getFile', argv)
 
     def banChatMember(self, chat_id, user_id, **argv) :
         params_table = {
@@ -554,7 +514,7 @@ class bot:
         }
         argv['chat_id'] = chat_id
         comfirm_params( params_table, argv )
-        return ChatInviteLink( post(self, 'createChatInviteLink', argv) )
+        return post(self, 'createChatInviteLink', argv)
 
     def editChatInviteLink(self, chat_id, invite_link, **argv) :
         params_table = {
@@ -568,7 +528,7 @@ class bot:
         argv['chat_id'] = chat_id
         argv['invite_link'] = invite_link
         comfirm_params( params_table, argv )
-        return ChatInviteLink( post(self, 'editChatInviteLink', argv) )
+        return post(self, 'editChatInviteLink', argv)
 
     def revokeChatInviteLink(self, chat_id, invite_link, **argv) :
         params_table = {
@@ -578,7 +538,7 @@ class bot:
         argv['chat_id'] = chat_id
         argv['invite_link'] = invite_link
         comfirm_params( params_table, argv )
-        return ChatInviteLink( post(self, 'revokeChatInviteLink', argv) )
+        return post(self, 'revokeChatInviteLink', argv)
 
     def approveChatJoinRequest(self, chat_id, user_id, **argv) :
         params_table = {
@@ -679,7 +639,7 @@ class bot:
         }
         argv['chat_id'] = chat_id
         comfirm_params( params_table, argv )
-        return Chat( post(self, 'getChat', argv) )
+        return post(self, 'getChat', argv)
 
     def getChatAdministrators(self, chat_id, **argv) :
         params_table = {
@@ -687,7 +647,7 @@ class bot:
         }
         argv['chat_id'] = chat_id
         comfirm_params( params_table, argv )
-        return [ChatMember(x) for x in post(self, 'getChatAdministrators', argv)]
+        return post(self, 'getChatAdministrators', argv)
 
     def getChatMemberCount(self, chat_id, **argv) :
         params_table = {
@@ -705,7 +665,7 @@ class bot:
         argv['chat_id'] = chat_id
         argv['user_id'] = user_id
         comfirm_params( params_table, argv )
-        return [ ChatMember(x) for x in post(self, 'getChatMember', argv) ]
+        return post(self, 'getChatMember', argv)
 
     def setChatStickerSet(self, chat_id, sticker_set_name, **argv) :
         params_table = {
@@ -739,7 +699,7 @@ class bot:
 
     def setMyCommands(self, commands, **argv) :
         params_table = {
-            'commands'                : list,
+            'commands'                : [BotCommand],
             'scope'                   : BotCommandScope,
             'language_code'           : str,
         }
@@ -761,7 +721,7 @@ class bot:
             'language_code'           : str,
         }
         comfirm_params( params_table, argv )
-        return [ BotCommand(x) for x in post(self, 'getMyCommands', argv) ]
+        return post(self, 'getMyCommands', argv)
 
     def editMessageText(self, text, **argv) :
         params_table = {
@@ -770,13 +730,13 @@ class bot:
             'inline_message_id'       : str,
             'text'                    : str,
             'parse_mode'              : str,
-            'entities'                : list,
+            'entities'                : [MessageEntity],
             'disable_web_page_preview' : bool,
             'reply_markup'            : InlineKeyboardMarkup,
         }
         argv['text'] = text
         comfirm_params( params_table, argv )
-        return Message( post(self, 'editMessageText', argv) )
+        return post(self, 'editMessageText', argv)
 
     def editMessageCaption(self, **argv) :
         params_table = {
@@ -785,11 +745,11 @@ class bot:
             'inline_message_id'       : str,
             'caption'                 : str,
             'parse_mode'              : str,
-            'caption_entities'        : list,
+            'caption_entities'        : [MessageEntity],
             'reply_markup'            : InlineKeyboardMarkup,
         }
         comfirm_params( params_table, argv )
-        return Message( post(self, 'editMessageCaption', argv) )
+        return post(self, 'editMessageCaption', argv)
 
     def editMessageMedia(self, media, **argv) :
         params_table = {
@@ -801,7 +761,7 @@ class bot:
         }
         argv['media'] = media
         comfirm_params( params_table, argv )
-        return Message( post(self, 'editMessageMedia', argv) )
+        return post(self, 'editMessageMedia', argv)
 
     def editMessageReplyMarkup(self, **argv) :
         params_table = {
@@ -811,7 +771,7 @@ class bot:
             'reply_markup'            : InlineKeyboardMarkup,
         }
         comfirm_params( params_table, argv )
-        return Message( post(self, 'editMessageReplyMarkup', argv) )
+        return post(self, 'editMessageReplyMarkup', argv)
 
     def stopPoll(self, chat_id, message_id, **argv) :
         params_table = {
@@ -822,7 +782,7 @@ class bot:
         argv['chat_id'] = chat_id
         argv['message_id'] = message_id
         comfirm_params( params_table, argv )
-        return Poll( post(self, 'stopPoll', argv) )
+        return post(self, 'stopPoll', argv)
 
     def deleteMessage(self, chat_id, message_id, **argv) :
         params_table = {
@@ -847,7 +807,7 @@ class bot:
         argv['chat_id'] = chat_id
         argv['sticker'] = sticker
         comfirm_params( params_table, argv )
-        return Message( post(self, 'sendSticker', argv) )
+        return post(self, 'sendSticker', argv)
 
     def getStickerSet(self, name, **argv) :
         params_table = {
@@ -855,7 +815,7 @@ class bot:
         }
         argv['name'] = name
         comfirm_params( params_table, argv )
-        return StickerSet( post(self, 'getStickerSet', argv) )
+        return post(self, 'getStickerSet', argv)
 
     def uploadStickerFile(self, user_id, png_sticker, **argv) :
         params_table = {
@@ -865,7 +825,7 @@ class bot:
         argv['user_id'] = user_id
         argv['png_sticker'] = png_sticker
         comfirm_params( params_table, argv )
-        return File( post(self, 'uploadStickerFile', argv) )
+        return post(self, 'uploadStickerFile', argv)
 
     def createNewStickerSet(self, user_id, name, title, emojis, **argv) :
         params_table = {
@@ -934,7 +894,7 @@ class bot:
     def answerInlineQuery(self, inline_query_id, results, **argv) :
         params_table = {
             'inline_query_id'         : str,
-            'results'                 : list,
+            'results'                 : [InlineQueryResult],
             'cache_time'              : int,
             'is_personal'             : bool,
             'next_offset'             : str,
@@ -954,9 +914,9 @@ class bot:
             'payload'                 : str,
             'provider_token'          : str,
             'currency'                : str,
-            'prices'                  : list,
+            'prices'                  : [LabeledPrice],
             'max_tip_amount'          : int,
-            'suggested_tip_amounts'   : list,
+            'suggested_tip_amounts'   : [],
             'start_parameter'         : str,
             'provider_data'           : str,
             'photo_url'               : str,
@@ -984,13 +944,13 @@ class bot:
         argv['currency'] = currency
         argv['prices'] = prices
         comfirm_params( params_table, argv )
-        return Message( post(self, 'sendInvoice', argv) )
+        return post(self, 'sendInvoice', argv)
 
     def answerShippingQuery(self, shipping_query_id, ok, **argv) :
         params_table = {
             'shipping_query_id'       : str,
             'ok'                      : bool,
-            'shipping_options'        : list,
+            'shipping_options'        : [ShippingOption],
             'error_message'           : str,
         }
         argv['shipping_query_id'] = shipping_query_id
@@ -1012,7 +972,7 @@ class bot:
     def setPassportDataErrors(self, user_id, errors, **argv) :
         params_table = {
             'user_id'                 : int,
-            'errors'                  : list,
+            'errors'                  : [PassportElementError],
         }
         argv['user_id'] = user_id
         argv['errors'] = errors
@@ -1032,7 +992,7 @@ class bot:
         argv['chat_id'] = chat_id
         argv['game_short_name'] = game_short_name
         comfirm_params( params_table, argv )
-        return Message( post(self, 'sendGame', argv) )
+        return post(self, 'sendGame', argv)
 
     def setGameScore(self, user_id, score, **argv) :
         params_table = {
@@ -1047,7 +1007,7 @@ class bot:
         argv['user_id'] = user_id
         argv['score'] = score
         comfirm_params( params_table, argv )
-        return Message( post(self, 'setGameScore', argv) )
+        return post(self, 'setGameScore', argv)
 
     def getGameHighScores(self, user_id, **argv) :
         params_table = {
@@ -1058,5 +1018,5 @@ class bot:
         }
         argv['user_id'] = user_id
         comfirm_params( params_table, argv )
-        return [GameHighScore(x) for x in post(self, 'getGameHighScores', argv)]
+        return post(self, 'getGameHighScores', argv)
 
