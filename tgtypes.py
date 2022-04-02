@@ -1,5 +1,6 @@
 from strings import str_type
 from strings import str_val
+from strings import decorating
 
 class tgtype:
     
@@ -25,7 +26,7 @@ class tgtype:
                     break
     
     def __tree__(self, offset):
-        s = "\033[37m"
+        s = ""
         for x, y in self.__dict__.items():
             tail = "├─ " if x != list(self.__dict__.keys())[-1] else "└─ "
             addi = "│  " if x != list(self.__dict__.keys())[-1] else "   "
@@ -45,7 +46,7 @@ class tgtype:
         return s
     
     def __str__(self):
-        return str_type(self) + "\n" + self.__tree__("") + "\033[0m"
+        return decorating( str_type(self) + "\n" + self.__tree__("") , "37", "0" )
 
 class Update(tgtype): pass
 class WebhookInfo(tgtype): pass
@@ -197,7 +198,7 @@ WebhookInfo.__type__table__ = {
                  'last_error_date' : int,
               'last_error_message' : str,
                  'max_connections' : int,
-                 'allowed_updates' : [],
+                 'allowed_updates' : [str],
 }
 
 User.__type__table__ = {
@@ -400,7 +401,7 @@ PollOption.__type__table__ = {
 PollAnswer.__type__table__ = {
                          'poll_id' : str,
                             'user' : User,
-                      'option_ids' : [],
+                      'option_ids' : [int],
 }
 
 Poll.__type__table__ = {
@@ -1097,7 +1098,7 @@ InputInvoiceMessageContent.__type__table__ = {
                         'currency' : str,
                           'prices' : [LabeledPrice],
                   'max_tip_amount' : int,
-           'suggested_tip_amounts' : [],
+           'suggested_tip_amounts' : [int],
                    'provider_data' : str,
                        'photo_url' : str,
                       'photo_size' : int,
@@ -1252,7 +1253,7 @@ PassportElementErrorFile.__type__table__ = {
 PassportElementErrorFiles.__type__table__ = {
                           'source' : str,
                             'type' : str,
-                     'file_hashes' : [],
+                     'file_hashes' : [str],
                          'message' : str,
 }
 
@@ -1266,7 +1267,7 @@ PassportElementErrorTranslationFile.__type__table__ = {
 PassportElementErrorTranslationFiles.__type__table__ = {
                           'source' : str,
                             'type' : str,
-                     'file_hashes' : [],
+                     'file_hashes' : [str],
                          'message' : str,
 }
 

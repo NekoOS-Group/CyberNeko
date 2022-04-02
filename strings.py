@@ -1,4 +1,4 @@
-def decorating(x, command = 30, default = "37"):
+def decorating(x, command = "30", default = "37"):
     return "\033[%sm%s\033[0m\033[%sm" % (str(command), x, str(default))
 
 def transfer(x):
@@ -10,7 +10,7 @@ def str_type(x):
     s = str(type(x)).split("'")[1]
     if s == 'list':
         s = decorating( "list[%d]" % len(x), 34 )
-    elif s == 'int' or s == 'float' or s == 'bool':
+    elif s in ['int', 'float', 'bool']:
         s = decorating(s, 36)
     elif s == 'str':
         s = decorating(s, 33)
