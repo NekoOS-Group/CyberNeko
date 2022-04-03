@@ -2,27 +2,33 @@ from strings import str_type
 from strings import str_val
 from strings import decorating
 
+import warnings
+
 class tgtype:
     
-    __type__table__ = {}
+    __type_table__ = {}
     
     def __init__(self, json_info={}):
-        for x, y in json_info.items():
-            _type = None
+        for name, val in json_info.items():
+            typeVal = None
+            
             try:
-                _type = self.__type__table__[x]
+                typeVal = self.__type_table__[name]
             except:
+                warnings.warn( "Unprocessed param %s" % name, RuntimeWarning )
                 continue
-            if _type == None:
-                raise Exception( "No such param" )
-            if type(_type) == type(type):
-                self.__dict__[x] = _type(y)
+            
+            if type(typeVal) != list:
+                self.__dict__[name] = typeVal(val)
                 continue
-            if len(_type) == 1:
-                self.__dict__[x] = [ _type[0](c) for c in y ]
-            for t in _type:
-                if isinstance(y, t):
-                    self.__dict__[x] = t(y)
+            
+            if len(typeVal) == 1:
+                self.__dict__[name] = [ typeVal[0](v) for v in val ]
+                continue
+            
+            for t in typeVal:
+                if isinstance(val, t):
+                    self.__dict__[name] = t(val)
                     break
     
     def __tree__(self, offset):
@@ -36,9 +42,9 @@ class tgtype:
                     tail = "├─ " if p < len(y) - 1 else "└─ "
                     addj = "│  " if p < len(y) - 1 else "   "
                     if isinstance( y[p], tgtype ):
-                        s += addi + offset + tail + ( "%s[%d] -> %s :\n%s" % ( x, p, str_type(y[p]), y[p].__tree__( offset + addi + addj ) ) )
+                        s += offset + addi + tail + ( "%s[%d] -> %s :\n%s" % ( x, p, str_type(y[p]), y[p].__tree__( offset + addi + addj ) ) )
                     else:
-                        s += addi + offset + tail + ( "%s[%d] -> %s : %s\n" % ( x, p, str_type(y[p]), str_val(y[p]) ) )
+                        s += offset + addi + tail + ( "%s[%d] -> %s : %s\n" % ( x, p, str_type(y[p]), str_val(y[p]) ) )
             elif isinstance( y, tgtype ):
                 s += offset + tail + ( "%s %s :\n%s" % ( str_type(y), x, y.__tree__( offset + addi ) ) )
             else:
@@ -46,7 +52,7 @@ class tgtype:
         return s
     
     def __str__(self):
-        return decorating( str_type(self) + "\n" + self.__tree__("") , "37", "0" )
+        return decorating( str_type(self) + "\n" + self.__tree__("") , 37, 0 )
 
 class Update(tgtype): pass
 class WebhookInfo(tgtype): pass
@@ -172,7 +178,7 @@ class CallbackGame(tgtype): pass
 class InputFile(tgtype): pass
 class InputMessageContent(tgtype): pass
 
-Update.__type__table__ = {
+Update.__type_table__ = {
                        'update_id' : int,
                          'message' : Message,
                   'edited_message' : Message,
@@ -190,7 +196,7 @@ Update.__type__table__ = {
                'chat_join_request' : ChatJoinRequest,
 }
 
-WebhookInfo.__type__table__ = {
+WebhookInfo.__type_table__ = {
                              'url' : str,
           'has_custom_certificate' : bool,
             'pending_update_count' : int,
@@ -201,7 +207,7 @@ WebhookInfo.__type__table__ = {
                  'allowed_updates' : [str],
 }
 
-User.__type__table__ = {
+User.__type_table__ = {
                               'id' : int,
                           'is_bot' : bool,
                       'first_name' : str,
@@ -213,7 +219,7 @@ User.__type__table__ = {
          'supports_inline_queries' : bool,
 }
 
-Chat.__type__table__ = {
+Chat.__type_table__ = {
                               'id' : int,
                             'type' : str,
                            'title' : str,
@@ -236,7 +242,7 @@ Chat.__type__table__ = {
                         'location' : ChatLocation,
 }
 
-Message.__type__table__ = {
+Message.__type_table__ = {
                       'message_id' : int,
                             'from' : User,
                      'sender_chat' : Chat,
@@ -297,11 +303,11 @@ Message.__type__table__ = {
                     'reply_markup' : InlineKeyboardMarkup,
 }
 
-MessageId.__type__table__ = {
+MessageId.__type_table__ = {
                       'message_id' : int,
 }
 
-MessageEntity.__type__table__ = {
+MessageEntity.__type_table__ = {
                             'type' : str,
                           'offset' : int,
                           'length' : int,
@@ -310,7 +316,7 @@ MessageEntity.__type__table__ = {
                         'language' : str,
 }
 
-PhotoSize.__type__table__ = {
+PhotoSize.__type_table__ = {
                          'file_id' : str,
                   'file_unique_id' : str,
                            'width' : int,
@@ -318,7 +324,7 @@ PhotoSize.__type__table__ = {
                        'file_size' : int,
 }
 
-Animation.__type__table__ = {
+Animation.__type_table__ = {
                          'file_id' : str,
                   'file_unique_id' : str,
                            'width' : int,
@@ -330,7 +336,7 @@ Animation.__type__table__ = {
                        'file_size' : int,
 }
 
-Audio.__type__table__ = {
+Audio.__type_table__ = {
                          'file_id' : str,
                   'file_unique_id' : str,
                         'duration' : int,
@@ -342,7 +348,7 @@ Audio.__type__table__ = {
                            'thumb' : PhotoSize,
 }
 
-Document.__type__table__ = {
+Document.__type_table__ = {
                          'file_id' : str,
                   'file_unique_id' : str,
                            'thumb' : PhotoSize,
@@ -351,7 +357,7 @@ Document.__type__table__ = {
                        'file_size' : int,
 }
 
-Video.__type__table__ = {
+Video.__type_table__ = {
                          'file_id' : str,
                   'file_unique_id' : str,
                            'width' : int,
@@ -363,7 +369,7 @@ Video.__type__table__ = {
                        'file_size' : int,
 }
 
-VideoNote.__type__table__ = {
+VideoNote.__type_table__ = {
                          'file_id' : str,
                   'file_unique_id' : str,
                           'length' : int,
@@ -372,7 +378,7 @@ VideoNote.__type__table__ = {
                        'file_size' : int,
 }
 
-Voice.__type__table__ = {
+Voice.__type_table__ = {
                          'file_id' : str,
                   'file_unique_id' : str,
                         'duration' : int,
@@ -380,7 +386,7 @@ Voice.__type__table__ = {
                        'file_size' : int,
 }
 
-Contact.__type__table__ = {
+Contact.__type_table__ = {
                     'phone_number' : str,
                       'first_name' : str,
                        'last_name' : str,
@@ -388,23 +394,23 @@ Contact.__type__table__ = {
                            'vcard' : str,
 }
 
-Dice.__type__table__ = {
+Dice.__type_table__ = {
                            'emoji' : str,
                            'value' : int,
 }
 
-PollOption.__type__table__ = {
+PollOption.__type_table__ = {
                             'text' : str,
                      'voter_count' : int,
 }
 
-PollAnswer.__type__table__ = {
+PollAnswer.__type_table__ = {
                          'poll_id' : str,
                             'user' : User,
                       'option_ids' : [int],
 }
 
-Poll.__type__table__ = {
+Poll.__type_table__ = {
                               'id' : str,
                         'question' : str,
                          'options' : [PollOption],
@@ -420,7 +426,7 @@ Poll.__type__table__ = {
                       'close_date' : int,
 }
 
-Location.__type__table__ = {
+Location.__type_table__ = {
                        'longitude' : float,
                         'latitude' : float,
              'horizontal_accuracy' : float,
@@ -429,7 +435,7 @@ Location.__type__table__ = {
           'proximity_alert_radius' : int,
 }
 
-Venue.__type__table__ = {
+Venue.__type_table__ = {
                         'location' : Location,
                            'title' : str,
                          'address' : str,
@@ -439,41 +445,41 @@ Venue.__type__table__ = {
                'google_place_type' : str,
 }
 
-ProximityAlertTriggered.__type__table__ = {
+ProximityAlertTriggered.__type_table__ = {
                         'traveler' : User,
                          'watcher' : User,
                         'distance' : int,
 }
 
-MessageAutoDeleteTimerChanged.__type__table__ = {
+MessageAutoDeleteTimerChanged.__type_table__ = {
         'message_auto_delete_time' : int,
 }
 
-VoiceChatScheduled.__type__table__ = {
+VoiceChatScheduled.__type_table__ = {
                       'start_date' : int,
 }
 
-VoiceChatEnded.__type__table__ = {
+VoiceChatEnded.__type_table__ = {
                         'duration' : int,
 }
 
-VoiceChatParticipantsInvited.__type__table__ = {
+VoiceChatParticipantsInvited.__type_table__ = {
                            'users' : [User],
 }
 
-UserProfilePhotos.__type__table__ = {
+UserProfilePhotos.__type_table__ = {
                      'total_count' : int,
                           'photos' : [PhotoSize],
 }
 
-File.__type__table__ = {
+File.__type_table__ = {
                          'file_id' : str,
                   'file_unique_id' : str,
                        'file_size' : int,
                        'file_path' : str,
 }
 
-ReplyKeyboardMarkup.__type__table__ = {
+ReplyKeyboardMarkup.__type_table__ = {
                         'keyboard' : [KeyboardButton],
                  'resize_keyboard' : bool,
                'one_time_keyboard' : bool,
@@ -481,27 +487,27 @@ ReplyKeyboardMarkup.__type__table__ = {
                        'selective' : bool,
 }
 
-KeyboardButton.__type__table__ = {
+KeyboardButton.__type_table__ = {
                             'text' : str,
                  'request_contact' : bool,
                 'request_location' : bool,
                     'request_poll' : KeyboardButtonPollType,
 }
 
-KeyboardButtonPollType.__type__table__ = {
+KeyboardButtonPollType.__type_table__ = {
                             'type' : str,
 }
 
-ReplyKeyboardRemove.__type__table__ = {
+ReplyKeyboardRemove.__type_table__ = {
                  'remove_keyboard' : bool,
                        'selective' : bool,
 }
 
-InlineKeyboardMarkup.__type__table__ = {
+InlineKeyboardMarkup.__type_table__ = {
                  'inline_keyboard' : [InlineKeyboardButton],
 }
 
-InlineKeyboardButton.__type__table__ = {
+InlineKeyboardButton.__type_table__ = {
                             'text' : str,
                              'url' : str,
                        'login_url' : LoginUrl,
@@ -512,14 +518,14 @@ InlineKeyboardButton.__type__table__ = {
                              'pay' : bool,
 }
 
-TITLE.__type__table__ = {
+TITLE.__type_table__ = {
                              'url' : str,
                     'forward_text' : str,
                     'bot_username' : str,
             'request_write_access' : bool,
 }
 
-CallbackQuery.__type__table__ = {
+CallbackQuery.__type_table__ = {
                               'id' : str,
                             'from' : User,
                          'message' : Message,
@@ -529,20 +535,20 @@ CallbackQuery.__type__table__ = {
                  'game_short_name' : str,
 }
 
-ForceReply.__type__table__ = {
+ForceReply.__type_table__ = {
                      'force_reply' : bool,
          'input_field_placeholder' : str,
                        'selective' : bool,
 }
 
-ChatPhoto.__type__table__ = {
+ChatPhoto.__type_table__ = {
                    'small_file_id' : str,
             'small_file_unique_id' : str,
                      'big_file_id' : str,
               'big_file_unique_id' : str,
 }
 
-ChatInviteLink.__type__table__ = {
+ChatInviteLink.__type_table__ = {
                      'invite_link' : str,
                          'creator' : User,
             'creates_join_request' : bool,
@@ -554,14 +560,14 @@ ChatInviteLink.__type__table__ = {
       'pending_join_request_count' : int,
 }
 
-ChatMemberOwner.__type__table__ = {
+ChatMemberOwner.__type_table__ = {
                           'status' : str,
                             'user' : User,
                     'is_anonymous' : bool,
                     'custom_title' : str,
 }
 
-ChatMemberAdministrator.__type__table__ = {
+ChatMemberAdministrator.__type_table__ = {
                           'status' : str,
                             'user' : User,
                    'can_be_edited' : bool,
@@ -579,12 +585,12 @@ ChatMemberAdministrator.__type__table__ = {
                     'custom_title' : str,
 }
 
-ChatMemberMember.__type__table__ = {
+ChatMemberMember.__type_table__ = {
                           'status' : str,
                             'user' : User,
 }
 
-ChatMemberRestricted.__type__table__ = {
+ChatMemberRestricted.__type_table__ = {
                           'status' : str,
                             'user' : User,
                        'is_member' : bool,
@@ -599,18 +605,18 @@ ChatMemberRestricted.__type__table__ = {
                       'until_date' : int,
 }
 
-ChatMemberLeft.__type__table__ = {
+ChatMemberLeft.__type_table__ = {
                           'status' : str,
                             'user' : User,
 }
 
-ChatMemberBanned.__type__table__ = {
+ChatMemberBanned.__type_table__ = {
                           'status' : str,
                             'user' : User,
                       'until_date' : int,
 }
 
-ChatMemberUpdated.__type__table__ = {
+ChatMemberUpdated.__type_table__ = {
                             'chat' : Chat,
                             'from' : User,
                             'date' : int,
@@ -619,7 +625,7 @@ ChatMemberUpdated.__type__table__ = {
                      'invite_link' : ChatInviteLink,
 }
 
-ChatJoinRequest.__type__table__ = {
+ChatJoinRequest.__type_table__ = {
                             'chat' : Chat,
                             'from' : User,
                             'date' : int,
@@ -627,7 +633,7 @@ ChatJoinRequest.__type__table__ = {
                      'invite_link' : ChatInviteLink,
 }
 
-ChatPermissions.__type__table__ = {
+ChatPermissions.__type_table__ = {
                'can_send_messages' : bool,
          'can_send_media_messages' : bool,
                   'can_send_polls' : bool,
@@ -638,54 +644,54 @@ ChatPermissions.__type__table__ = {
                 'can_pin_messages' : bool,
 }
 
-ChatLocation.__type__table__ = {
+ChatLocation.__type_table__ = {
                         'location' : Location,
                          'address' : str,
 }
 
-BotCommand.__type__table__ = {
+BotCommand.__type_table__ = {
                          'command' : str,
                      'description' : str,
 }
 
-BotCommandScopeDefault.__type__table__ = {
+BotCommandScopeDefault.__type_table__ = {
                             'type' : str,
 }
 
-BotCommandScopeAllPrivateChats.__type__table__ = {
+BotCommandScopeAllPrivateChats.__type_table__ = {
                             'type' : str,
 }
 
-BotCommandScopeAllGroupChats.__type__table__ = {
+BotCommandScopeAllGroupChats.__type_table__ = {
                             'type' : str,
 }
 
-BotCommandScopeAllChatAdministrators.__type__table__ = {
+BotCommandScopeAllChatAdministrators.__type_table__ = {
                             'type' : str,
 }
 
-BotCommandScopeChat.__type__table__ = {
-                            'type' : str,
-                         'chat_id' : [int, str],
-}
-
-BotCommandScopeChatAdministrators.__type__table__ = {
+BotCommandScopeChat.__type_table__ = {
                             'type' : str,
                          'chat_id' : [int, str],
 }
 
-BotCommandScopeChatMember.__type__table__ = {
+BotCommandScopeChatAdministrators.__type_table__ = {
+                            'type' : str,
+                         'chat_id' : [int, str],
+}
+
+BotCommandScopeChatMember.__type_table__ = {
                             'type' : str,
                          'chat_id' : [int, str],
                          'user_id' : int,
 }
 
-ResponseParameters.__type__table__ = {
+ResponseParameters.__type_table__ = {
               'migrate_to_chat_id' : int,
                      'retry_after' : int,
 }
 
-InputMediaPhoto.__type__table__ = {
+InputMediaPhoto.__type_table__ = {
                             'type' : str,
                            'media' : str,
                          'caption' : str,
@@ -693,7 +699,7 @@ InputMediaPhoto.__type__table__ = {
                 'caption_entities' : [MessageEntity],
 }
 
-InputMediaVideo.__type__table__ = {
+InputMediaVideo.__type_table__ = {
                             'type' : str,
                            'media' : str,
                            'thumb' : [InputFile, str],
@@ -706,7 +712,7 @@ InputMediaVideo.__type__table__ = {
               'supports_streaming' : bool,
 }
 
-InputMediaAnimation.__type__table__ = {
+InputMediaAnimation.__type_table__ = {
                             'type' : str,
                            'media' : str,
                            'thumb' : [InputFile, str],
@@ -718,7 +724,7 @@ InputMediaAnimation.__type__table__ = {
                         'duration' : int,
 }
 
-InputMediaAudio.__type__table__ = {
+InputMediaAudio.__type_table__ = {
                             'type' : str,
                            'media' : str,
                            'thumb' : [InputFile, str],
@@ -730,7 +736,7 @@ InputMediaAudio.__type__table__ = {
                            'title' : str,
 }
 
-InputMediaDocument.__type__table__ = {
+InputMediaDocument.__type_table__ = {
                             'type' : str,
                            'media' : str,
                            'thumb' : [InputFile, str],
@@ -740,7 +746,7 @@ InputMediaDocument.__type__table__ = {
   'disable_content_type_detection' : bool,
 }
 
-Sticker.__type__table__ = {
+Sticker.__type_table__ = {
                          'file_id' : str,
                   'file_unique_id' : str,
                            'width' : int,
@@ -754,7 +760,7 @@ Sticker.__type__table__ = {
                        'file_size' : int,
 }
 
-StickerSet.__type__table__ = {
+StickerSet.__type_table__ = {
                             'name' : str,
                            'title' : str,
                      'is_animated' : bool,
@@ -764,14 +770,14 @@ StickerSet.__type__table__ = {
                            'thumb' : PhotoSize,
 }
 
-MaskPosition.__type__table__ = {
+MaskPosition.__type_table__ = {
                            'point' : str,
                          'x_shift' : float,
                          'y_shift' : float,
                            'scale' : float,
 }
 
-InlineQuery.__type__table__ = {
+InlineQuery.__type_table__ = {
                               'id' : str,
                             'from' : User,
                            'query' : str,
@@ -780,7 +786,7 @@ InlineQuery.__type__table__ = {
                         'location' : Location,
 }
 
-InlineQueryResultArticle.__type__table__ = {
+InlineQueryResultArticle.__type_table__ = {
                             'type' : str,
                               'id' : str,
                            'title' : str,
@@ -794,7 +800,7 @@ InlineQueryResultArticle.__type__table__ = {
                     'thumb_height' : int,
 }
 
-InlineQueryResultPhoto.__type__table__ = {
+InlineQueryResultPhoto.__type_table__ = {
                             'type' : str,
                               'id' : str,
                        'photo_url' : str,
@@ -810,7 +816,7 @@ InlineQueryResultPhoto.__type__table__ = {
            'input_message_content' : InputMessageContent,
 }
 
-InlineQueryResultGif.__type__table__ = {
+InlineQueryResultGif.__type_table__ = {
                             'type' : str,
                               'id' : str,
                          'gif_url' : str,
@@ -827,7 +833,7 @@ InlineQueryResultGif.__type__table__ = {
            'input_message_content' : InputMessageContent,
 }
 
-InlineQueryResultMpeg4Gif.__type__table__ = {
+InlineQueryResultMpeg4Gif.__type_table__ = {
                             'type' : str,
                               'id' : str,
                        'mpeg4_url' : str,
@@ -844,7 +850,7 @@ InlineQueryResultMpeg4Gif.__type__table__ = {
            'input_message_content' : InputMessageContent,
 }
 
-InlineQueryResultVideo.__type__table__ = {
+InlineQueryResultVideo.__type_table__ = {
                             'type' : str,
                               'id' : str,
                        'video_url' : str,
@@ -862,7 +868,7 @@ InlineQueryResultVideo.__type__table__ = {
            'input_message_content' : InputMessageContent,
 }
 
-InlineQueryResultAudio.__type__table__ = {
+InlineQueryResultAudio.__type_table__ = {
                             'type' : str,
                               'id' : str,
                        'audio_url' : str,
@@ -876,7 +882,7 @@ InlineQueryResultAudio.__type__table__ = {
            'input_message_content' : InputMessageContent,
 }
 
-InlineQueryResultVoice.__type__table__ = {
+InlineQueryResultVoice.__type_table__ = {
                             'type' : str,
                               'id' : str,
                        'voice_url' : str,
@@ -889,7 +895,7 @@ InlineQueryResultVoice.__type__table__ = {
            'input_message_content' : InputMessageContent,
 }
 
-InlineQueryResultDocument.__type__table__ = {
+InlineQueryResultDocument.__type_table__ = {
                             'type' : str,
                               'id' : str,
                            'title' : str,
@@ -906,7 +912,7 @@ InlineQueryResultDocument.__type__table__ = {
                     'thumb_height' : int,
 }
 
-InlineQueryResultLocation.__type__table__ = {
+InlineQueryResultLocation.__type_table__ = {
                             'type' : str,
                               'id' : str,
                         'latitude' : float,
@@ -923,7 +929,7 @@ InlineQueryResultLocation.__type__table__ = {
                     'thumb_height' : int,
 }
 
-InlineQueryResultVenue.__type__table__ = {
+InlineQueryResultVenue.__type_table__ = {
                             'type' : str,
                               'id' : str,
                         'latitude' : float,
@@ -941,7 +947,7 @@ InlineQueryResultVenue.__type__table__ = {
                     'thumb_height' : int,
 }
 
-InlineQueryResultContact.__type__table__ = {
+InlineQueryResultContact.__type_table__ = {
                             'type' : str,
                               'id' : str,
                     'phone_number' : str,
@@ -955,14 +961,14 @@ InlineQueryResultContact.__type__table__ = {
                     'thumb_height' : int,
 }
 
-InlineQueryResultGame.__type__table__ = {
+InlineQueryResultGame.__type_table__ = {
                             'type' : str,
                               'id' : str,
                  'game_short_name' : str,
                     'reply_markup' : InlineKeyboardMarkup,
 }
 
-InlineQueryResultCachedPhoto.__type__table__ = {
+InlineQueryResultCachedPhoto.__type_table__ = {
                             'type' : str,
                               'id' : str,
                    'photo_file_id' : str,
@@ -975,7 +981,7 @@ InlineQueryResultCachedPhoto.__type__table__ = {
            'input_message_content' : InputMessageContent,
 }
 
-InlineQueryResultCachedGif.__type__table__ = {
+InlineQueryResultCachedGif.__type_table__ = {
                             'type' : str,
                               'id' : str,
                      'gif_file_id' : str,
@@ -987,7 +993,7 @@ InlineQueryResultCachedGif.__type__table__ = {
            'input_message_content' : InputMessageContent,
 }
 
-InlineQueryResultCachedMpeg4Gif.__type__table__ = {
+InlineQueryResultCachedMpeg4Gif.__type_table__ = {
                             'type' : str,
                               'id' : str,
                    'mpeg4_file_id' : str,
@@ -999,7 +1005,7 @@ InlineQueryResultCachedMpeg4Gif.__type__table__ = {
            'input_message_content' : InputMessageContent,
 }
 
-InlineQueryResultCachedSticker.__type__table__ = {
+InlineQueryResultCachedSticker.__type_table__ = {
                             'type' : str,
                               'id' : str,
                  'sticker_file_id' : str,
@@ -1007,7 +1013,7 @@ InlineQueryResultCachedSticker.__type__table__ = {
            'input_message_content' : InputMessageContent,
 }
 
-InlineQueryResultCachedDocument.__type__table__ = {
+InlineQueryResultCachedDocument.__type_table__ = {
                             'type' : str,
                               'id' : str,
                            'title' : str,
@@ -1020,7 +1026,7 @@ InlineQueryResultCachedDocument.__type__table__ = {
            'input_message_content' : InputMessageContent,
 }
 
-InlineQueryResultCachedVideo.__type__table__ = {
+InlineQueryResultCachedVideo.__type_table__ = {
                             'type' : str,
                               'id' : str,
                    'video_file_id' : str,
@@ -1033,7 +1039,7 @@ InlineQueryResultCachedVideo.__type__table__ = {
            'input_message_content' : InputMessageContent,
 }
 
-InlineQueryResultCachedVoice.__type__table__ = {
+InlineQueryResultCachedVoice.__type_table__ = {
                             'type' : str,
                               'id' : str,
                    'voice_file_id' : str,
@@ -1045,7 +1051,7 @@ InlineQueryResultCachedVoice.__type__table__ = {
            'input_message_content' : InputMessageContent,
 }
 
-InlineQueryResultCachedAudio.__type__table__ = {
+InlineQueryResultCachedAudio.__type_table__ = {
                             'type' : str,
                               'id' : str,
                    'audio_file_id' : str,
@@ -1056,14 +1062,14 @@ InlineQueryResultCachedAudio.__type__table__ = {
            'input_message_content' : InputMessageContent,
 }
 
-InputTextMessageContent.__type__table__ = {
+InputTextMessageContent.__type_table__ = {
                     'message_text' : str,
                       'parse_mode' : str,
                         'entities' : [MessageEntity],
         'disable_web_page_preview' : bool,
 }
 
-InputLocationMessageContent.__type__table__ = {
+InputLocationMessageContent.__type_table__ = {
                         'latitude' : float,
                        'longitude' : float,
              'horizontal_accuracy' : float,
@@ -1072,7 +1078,7 @@ InputLocationMessageContent.__type__table__ = {
           'proximity_alert_radius' : int,
 }
 
-InputVenueMessageContent.__type__table__ = {
+InputVenueMessageContent.__type_table__ = {
                         'latitude' : float,
                        'longitude' : float,
                            'title' : str,
@@ -1083,14 +1089,14 @@ InputVenueMessageContent.__type__table__ = {
                'google_place_type' : str,
 }
 
-InputContactMessageContent.__type__table__ = {
+InputContactMessageContent.__type_table__ = {
                     'phone_number' : str,
                       'first_name' : str,
                        'last_name' : str,
                            'vcard' : str,
 }
 
-InputInvoiceMessageContent.__type__table__ = {
+InputInvoiceMessageContent.__type_table__ = {
                            'title' : str,
                      'description' : str,
                          'payload' : str,
@@ -1113,7 +1119,7 @@ InputInvoiceMessageContent.__type__table__ = {
                      'is_flexible' : bool,
 }
 
-ChosenInlineResult.__type__table__ = {
+ChosenInlineResult.__type_table__ = {
                        'result_id' : str,
                             'from' : User,
                         'location' : Location,
@@ -1121,12 +1127,12 @@ ChosenInlineResult.__type__table__ = {
                            'query' : str,
 }
 
-LabeledPrice.__type__table__ = {
+LabeledPrice.__type_table__ = {
                            'label' : str,
                           'amount' : int,
 }
 
-Invoice.__type__table__ = {
+Invoice.__type_table__ = {
                            'title' : str,
                      'description' : str,
                  'start_parameter' : str,
@@ -1134,7 +1140,7 @@ Invoice.__type__table__ = {
                     'total_amount' : int,
 }
 
-ShippingAddress.__type__table__ = {
+ShippingAddress.__type_table__ = {
                     'country_code' : str,
                            'state' : str,
                             'city' : str,
@@ -1143,20 +1149,20 @@ ShippingAddress.__type__table__ = {
                        'post_code' : str,
 }
 
-OrderInfo.__type__table__ = {
+OrderInfo.__type_table__ = {
                             'name' : str,
                     'phone_number' : str,
                            'email' : str,
                 'shipping_address' : ShippingAddress,
 }
 
-ShippingOption.__type__table__ = {
+ShippingOption.__type_table__ = {
                               'id' : str,
                            'title' : str,
                           'prices' : [LabeledPrice],
 }
 
-SuccessfulPayment.__type__table__ = {
+SuccessfulPayment.__type_table__ = {
                         'currency' : str,
                     'total_amount' : int,
                  'invoice_payload' : str,
@@ -1166,14 +1172,14 @@ SuccessfulPayment.__type__table__ = {
       'provider_payment_charge_id' : str,
 }
 
-ShippingQuery.__type__table__ = {
+ShippingQuery.__type_table__ = {
                               'id' : str,
                             'from' : User,
                  'invoice_payload' : str,
                 'shipping_address' : ShippingAddress,
 }
 
-PreCheckoutQuery.__type__table__ = {
+PreCheckoutQuery.__type_table__ = {
                               'id' : str,
                             'from' : User,
                         'currency' : str,
@@ -1183,19 +1189,19 @@ PreCheckoutQuery.__type__table__ = {
                       'order_info' : OrderInfo,
 }
 
-PassportData.__type__table__ = {
+PassportData.__type_table__ = {
                             'data' : [EncryptedPassportElement],
                      'credentials' : EncryptedCredentials,
 }
 
-PassportFile.__type__table__ = {
+PassportFile.__type_table__ = {
                          'file_id' : str,
                   'file_unique_id' : str,
                        'file_size' : int,
                        'file_date' : int,
 }
 
-EncryptedPassportElement.__type__table__ = {
+EncryptedPassportElement.__type_table__ = {
                             'type' : str,
                             'data' : str,
                     'phone_number' : str,
@@ -1208,13 +1214,13 @@ EncryptedPassportElement.__type__table__ = {
                             'hash' : str,
 }
 
-EncryptedCredentials.__type__table__ = {
+EncryptedCredentials.__type_table__ = {
                             'data' : str,
                             'hash' : str,
                           'secret' : str,
 }
 
-PassportElementErrorDataField.__type__table__ = {
+PassportElementErrorDataField.__type_table__ = {
                           'source' : str,
                             'type' : str,
                       'field_name' : str,
@@ -1222,63 +1228,63 @@ PassportElementErrorDataField.__type__table__ = {
                          'message' : str,
 }
 
-PassportElementErrorFrontSide.__type__table__ = {
+PassportElementErrorFrontSide.__type_table__ = {
                           'source' : str,
                             'type' : str,
                        'file_hash' : str,
                          'message' : str,
 }
 
-PassportElementErrorReverseSide.__type__table__ = {
+PassportElementErrorReverseSide.__type_table__ = {
                           'source' : str,
                             'type' : str,
                        'file_hash' : str,
                          'message' : str,
 }
 
-PassportElementErrorSelfie.__type__table__ = {
+PassportElementErrorSelfie.__type_table__ = {
                           'source' : str,
                             'type' : str,
                        'file_hash' : str,
                          'message' : str,
 }
 
-PassportElementErrorFile.__type__table__ = {
+PassportElementErrorFile.__type_table__ = {
                           'source' : str,
                             'type' : str,
                        'file_hash' : str,
                          'message' : str,
 }
 
-PassportElementErrorFiles.__type__table__ = {
+PassportElementErrorFiles.__type_table__ = {
                           'source' : str,
                             'type' : str,
                      'file_hashes' : [str],
                          'message' : str,
 }
 
-PassportElementErrorTranslationFile.__type__table__ = {
+PassportElementErrorTranslationFile.__type_table__ = {
                           'source' : str,
                             'type' : str,
                        'file_hash' : str,
                          'message' : str,
 }
 
-PassportElementErrorTranslationFiles.__type__table__ = {
+PassportElementErrorTranslationFiles.__type_table__ = {
                           'source' : str,
                             'type' : str,
                      'file_hashes' : [str],
                          'message' : str,
 }
 
-PassportElementErrorUnspecified.__type__table__ = {
+PassportElementErrorUnspecified.__type_table__ = {
                           'source' : str,
                             'type' : str,
                     'element_hash' : str,
                          'message' : str,
 }
 
-Game.__type__table__ = {
+Game.__type_table__ = {
                            'title' : str,
                      'description' : str,
                            'photo' : [PhotoSize],
@@ -1287,7 +1293,7 @@ Game.__type__table__ = {
                        'animation' : Animation,
 }
 
-GameHighScore.__type__table__ = {
+GameHighScore.__type_table__ = {
                         'position' : int,
                             'user' : User,
                            'score' : int,

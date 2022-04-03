@@ -1,12 +1,15 @@
 import requests
 from tgbot import bot
 import json
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
 
 token=input()
 proxy="localhost:7890"
 
 # proxy is optional
-s = bot(token,proxy=proxy)
+s = bot(token, proxy=proxy, name = "Neko", DEBUG=True)
 
 _id = s.getUpdates(offset=-1)[0].message.message_id + 1
 

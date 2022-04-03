@@ -1,14 +1,21 @@
 from poster import post, comfirm_params
 from tgtypes import *
+import logging
 
 class bot:
-    def __init__(self, token, proxy=""):
+    def __init__(self, token, proxy="", name = "", DEBUG=False):
         self.__setToken__(token)
         self.__setProxy__(proxy)
         self.url = "https://api.telegram.org/bot" + token + "/"
+        self.logger=logging.getLogger(name)
+        
+        if DEBUG:
+            self.logger.setLevel(logging.DEBUG)
+        
         try:
             self.getMe()
         except:
+            self.logger.error("Can't connect telegram service or wrong token")
             raise Exception("Can't connect telegram service or wrong token.")
     
     def __str__(self):
