@@ -1,12 +1,16 @@
+from tgbot.bits.decorators import log_full, log_stack, log_timer
 from tgbot.bits.poster import post, comfirm_params
 from tgbot.tgtypes import *
 import logging
+
+logger = logging.getLogger('tgbot')
 
 class bot:
     def __init__(self, token, proxy="", name = "", DEBUG=False):
         self.__token__ = token
         self.__proxy__ = { 'https': proxy, 'http': proxy }
-        self.logger=logging.getLogger(name)
+        self.__name__ = name
+        self.logger = logging.getLogger(name)
         
         if DEBUG:
             self.logger.setLevel(logging.DEBUG)
@@ -21,7 +25,9 @@ class bot:
     
     def __str__(self):
         return str( self.getMe() )
-
+    
+    def __repr__(self):
+        return self.__name__
 # properties
    
     @property
@@ -37,9 +43,13 @@ class bot:
         return f"https://api.telegram.org/bot{self.__token__}/"
     
 # API functions
+    @log_full(logger)
+    @log_timer(logger)
     def getMe(self):
         return User( post(self, 'getMe') )
-        
+    
+    @log_full(logger)
+    @log_timer(logger)
     def getUpdates(self, **argv) :
         params_table = {
             'offset'                  : int,

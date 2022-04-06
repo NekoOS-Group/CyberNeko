@@ -1,8 +1,7 @@
 import requests
 import json
-from tgbot.bits.decorators import full_log
+from tgbot.bits.decorators import log_full, log_stack, log_timer
 
-@full_log()
 def __post__(url, command, params, proxy):
     r = requests.get( url+command, params = params, proxies=proxy )
     if r.status_code != 200:
