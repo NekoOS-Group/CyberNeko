@@ -1,5 +1,5 @@
 import requests
-from tgbot import bot
+from tgbot.tgapi import bot
 import json
 import logging
 

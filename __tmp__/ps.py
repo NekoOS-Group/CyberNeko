@@ -19,7 +19,6 @@ def detect_type(x):
     if x.find(' or ') >= 0:
         return str([detect_type(y) for y in x.split(' or ')]).replace("'", '')
     if x.find('Array') >= 0:
-        print(x)
         return "[%s]" % x.split('Array')[0].strip()
     if x.find('Int') >= 0:
         return 'int'

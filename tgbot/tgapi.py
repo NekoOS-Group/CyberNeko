@@ -1,5 +1,5 @@
-from poster import post, comfirm_params
-from tgtypes import *
+from tgbot.bits.poster import post, comfirm_params
+from tgbot.tgtypes import *
 import logging
 
 class bot:

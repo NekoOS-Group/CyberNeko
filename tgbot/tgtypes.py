@@ -1,6 +1,4 @@
-from strings import str_type
-from strings import str_val
-from strings import decorating
+from tgbot.bits.strings import str_type, str_val, decorating
 
 import warnings
 

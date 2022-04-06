@@ -1,6 +1,6 @@
 import requests
 import json
-from strings import decorating
+#from strings import decorating
 import time
 
 def __post__(url, command, params, proxy, logger=None):
@@ -8,7 +8,7 @@ def __post__(url, command, params, proxy, logger=None):
         if logger != None : 
             global time_offset
             time_offset = time.perf_counter()
-            logger.info( "%-80s" % ( "API request : %s %s " % ( decorating( command, 33 ), str(params) ) ) )
+            #logger.info( "%-80s" % ( "API request : %s %s " % ( decorating( command, 33 ), str(params) ) ) )
         
         r = requests.get( url+command, params = params, proxies=proxy )
         if r.status_code != 200:
@@ -18,7 +18,8 @@ def __post__(url, command, params, proxy, logger=None):
             raise Exception("Bad requests")
         
         if logger != None : 
-            logger.info( decorating( "Success! TTL=%fs\n" % (time.perf_counter() - time_offset), 32 ) )
+            pass
+            #logger.info( decorating( "Success! TTL=%fs\n" % (time.perf_counter() - time_offset), 32 ) )
         
         return r['result']
     except:
