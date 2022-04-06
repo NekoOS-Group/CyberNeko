@@ -3,77 +3,82 @@ import functools
 import logging
 import time
 
-def clamper(begin = None, end = None):
-    
+
+def bread(begin=None, end=None):
     def decorator(f):
-    
+
         @functools.wraps(f)
-        def warpper(*args, **kargs):
+        def wrapper(*args, **kwargs):
             message = None
-            
-            if begin != None:
-                message = begin(f, *args, **kargs)
-            
-            ret = f(*args, **kargs)
-            
-            if end != None:
-                if message != None:
-                    kargs['message_by_begin'] = message
-                if ret != None:
-                    kargs['message_by_function'] = ret
-                
-                end(f, *args, **kargs)
-            
+
+            if begin is not None:
+                message = begin(f, *args, **kwargs)
+
+            ret = f(*args, **kwargs)
+
+            if end is not None:
+                if message is not None:
+                    kwargs['message_by_begin'] = message
+                if ret is not None:
+                    kwargs['message_by_function'] = ret
+
+                end(f, *args, **kwargs)
+
             return ret
-        return warpper
-    
+
+        return wrapper
+
     return decorator
 
-def log_enter(logger = None, logArgs = False):
-    def log(f, *args, **kargs):
-        message = ""
+
+def log_enter(logger=None, logArgs=False):
+    def log(f, *args, **kwargs):
         if logArgs:
-            arg = "(" + ", ".join([repr(x) for x in args] + [f"{k}={v!r}" for k, v in kargs.items()]) + ")"
+            arg = "(" + ", ".join([repr(x) for x in args] + [f"{k}={v!r}" for k, v in kwargs.items()]) + ")"
             message = f"Calling {decorating(f.__name__, 32)}{arg}"
         else:
             message = f"+ {decorating(f.__name__, 32)}"
-        
-        if logger == None:
+
+        if logger is None:
             logging.debug(message)
-        else: 
+        else:
             logger.debug(message)
+
     return log
-    
-def log_exit(logger = None, logRets = False):
-    def log(f, *args, **kargs):
-        message = ""
+
+
+def log_exit(logger=None, logRets=False):
+    def log(f, *args, **kwargs):
         if logRets:
-            ret = " returned " + repr(kargs['message_by_function'])
+            ret = " returned " + repr(kwargs['message_by_function'])
             message = f"{decorating(f.__name__, 31)}{ret}"
         else:
             message = f"- {decorating(f.__name__, 31)}"
-        
-        if logger == None:
-            logging.debug(message)
-        else: 
+
+        if logger is not None:
             logger.debug(message)
+        else:
+            logging.debug(message)
+
     return log
 
-def log_full(logger = None):
-    return clamper( log_enter(logger, True), log_exit(logger, True) )
-    
-def log_stack(logger = None):
-    return clamper( log_enter(logger), log_exit(logger) )
-    
-def log_timer(logger = None):
-    def begin(*args, **kargs):
-        return time.perf_counter()
-    
-    def end(*args, **kargs):
-        if logger == None:
-            logging.debug( f"for {decorating(time.perf_counter() - kargs['message_by_begin'], 32)}s" )
-        else:
-            logger.debug( f"for {decorating(time.perf_counter() - kargs['message_by_begin'], 32)}s" )
-    
-    return clamper( begin, end )
 
+def log_full(logger=None):
+    return bread(log_enter(logger, True), log_exit(logger, True))
+
+
+def log_stack(logger=None):
+    return bread(log_enter(logger), log_exit(logger))
+
+
+def log_timer(logger=None):
+    def begin(*args, **kwargs):
+        return time.perf_counter()
+
+    def end(*args, **kwargs):
+        if logger is not None:
+            logger.debug(f"for {decorating(time.perf_counter() - kwargs['message_by_begin'], 32)}s")
+        else:
+            logging.debug(f"for {decorating(time.perf_counter() - kwargs['message_by_begin'], 32)}s")
+
+    return bread(begin, end)
