@@ -4,13 +4,14 @@ import logging
 
 class bot:
     def __init__(self, token, proxy="", name = "", DEBUG=False):
-        self.__setToken__(token)
-        self.__setProxy__(proxy)
-        self.url = "https://api.telegram.org/bot" + token + "/"
+        self.__token__ = token
+        self.__proxy__ = { 'https': proxy, 'http': proxy }
         self.logger=logging.getLogger(name)
         
         if DEBUG:
             self.logger.setLevel(logging.DEBUG)
+        
+        self.logger.info( f"init bot {name}" )
         
         try:
             self.getMe()
@@ -19,26 +20,23 @@ class bot:
             raise Exception("Can't connect telegram service or wrong token.")
     
     def __str__(self):
-        return str(self.getMe())
+        return str( self.getMe() )
 
-# private functions
-       
-    def __setToken__(self, token):
-        self.token = token
+# properties
+   
+    @property
+    def token(self):
+        return self.__token__ 
     
-    def __setProxy__(self, proxy):
-        self.proxy = {
-            'https':proxy,
-            'http':proxy
-        }
+    @property
+    def proxy(self):
+        return self.__proxy__
     
-    def __getUrl__(self):
-        return self.url
+    @property
+    def url(self):
+        return f"https://api.telegram.org/bot{self.__token__}/"
     
-    def __getProxy__(self):
-        return self.proxy
-    
-# public functions
+# API functions
     def getMe(self):
         return User( post(self, 'getMe') )
         

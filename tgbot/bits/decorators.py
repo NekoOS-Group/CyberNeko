@@ -1,3 +1,7 @@
+import functools
+import logging
+import time
+
 def clamper(begin = None, end = None):
     
     def decorator(f):
@@ -7,8 +11,8 @@ def clamper(begin = None, end = None):
             message = None
             
             if begin != None:
-                message = begin(*args, **kargs)
-                
+                message = begin(f, *args, **kargs)
+            
             ret = f(*args, **kargs)
             
             if end != None:
@@ -17,15 +21,28 @@ def clamper(begin = None, end = None):
                 if ret != None:
                     kargs['message_by_function'] = ret
                 
-                end(*args, **kargs)
+                end(f, *args, **kargs)
             
             return ret
         return warpper
     
     return decorator
 
-def log_enter(logger):
-    pass
+def log_enter(logger = None):
+    def log(f, *args, **kargs):
+        if logger is None:
+            logging.debug( f"Calling {f.__name__}({args}, {kargs})" )
+        else: 
+            logger.debug( f"Calling {f.__name__}({args}, {kargs})" )
+    return log
     
-def log_exit(logger):
-    pass
+def log_exit(logger = None):
+    def log(f, *args, **kargs):
+        if logger is None:
+            logging.debug( f"{f.__name__} returned {kargs['message_by_function']}" )
+        else: 
+            logger.debug( f"{f.__name__} returned {kargs['message_by_function']}" )
+    return log
+
+def full_log(logger = None):
+    return clamper( log_enter(logger), log_exit(logger) )

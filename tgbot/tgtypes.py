@@ -13,7 +13,7 @@ class tgtype:
             try:
                 typeVal = self.__type_table__[name]
             except:
-                warnings.warn( "Unprocessed param %s" % name, RuntimeWarning )
+                warnings.warn( f"Unprocessed param {name}", RuntimeWarning )
                 continue
             
             if type(typeVal) != list:
@@ -29,28 +29,29 @@ class tgtype:
                     self.__dict__[name] = t(val)
                     break
     
-    def __tree__(self, offset):
+    def __tree__(self, offset = ""):
         s = ""
         for x, y in self.__dict__.items():
             tail = "├─ " if x != list(self.__dict__.keys())[-1] else "└─ "
             addi = "│  " if x != list(self.__dict__.keys())[-1] else "   "
             if isinstance( y, list ):
-                s += offset + tail + ( "%s %s:\n" % (str_type(y), x) )
+                s += offset + tail + f"{str_type(y)} {x}:\n"
+                offset = offset + addi
                 for p in range(len(y)):
-                    tail = "├─ " if p < len(y) - 1 else "└─ "
-                    addj = "│  " if p < len(y) - 1 else "   "
+                    tail = "├─ " if p != len(y) - 1 else "└─ "
+                    addi = "│  " if p != len(y) - 1 else "   "
                     if isinstance( y[p], tgtype ):
-                        s += offset + addi + tail + ( "%s[%d] -> %s :\n%s" % ( x, p, str_type(y[p]), y[p].__tree__( offset + addi + addj ) ) )
+                        s += offset + tail + f"{x}[{p}] -> {str_type(y[p])} :\n" + y[p].__tree__( offset + addi )
                     else:
-                        s += offset + addi + tail + ( "%s[%d] -> %s : %s\n" % ( x, p, str_type(y[p]), str_val(y[p]) ) )
+                        s += offset + tail + f"{x}[{p}] -> {str_type(y[p])} : {str_val(y[p])}\n"
             elif isinstance( y, tgtype ):
-                s += offset + tail + ( "%s %s :\n%s" % ( str_type(y), x, y.__tree__( offset + addi ) ) )
+                s += offset + tail + f"{str_type(y)} {x} :\n" + y.__tree__( offset + addi )
             else:
-                s += offset + tail + ( "%s %s : %s\n" % ( str_type(y), x, str_val(y) ) )
+                s += offset + tail + f"{str_type(y)} {x} : {str_val(y)}\n"
         return s
     
     def __str__(self):
-        return decorating( str_type(self) + "\n" + self.__tree__("") , 37, 0 )
+        return decorating( str_type(self) + "\n" + self.__tree__() , 37, 0 )
 
 class Update(tgtype): pass
 class WebhookInfo(tgtype): pass

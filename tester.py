@@ -11,6 +11,8 @@ proxy="localhost:7890"
 # proxy is optional
 s = bot(token, proxy=proxy, name = "Neko", DEBUG=True)
 
+print(s)
+
 _id = s.getUpdates(offset=-1)[0].message.message_id + 1
 
 print( "begin at %d" % _id )
