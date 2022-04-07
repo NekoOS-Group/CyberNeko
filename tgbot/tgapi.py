@@ -1,34 +1,26 @@
-from tgbot.bits.decorators import log_full, log_stack, log_timer
+from tgbot.bits.decorators import log_full, log_stack, log_timer, log_exceptions
 from tgbot.bits.poster import post, confirm_params
 from tgbot.tgtypes import *
-import logging
-
-logger = logging.getLogger('tgbot')
+from tgbot import logger
 
 
 class bot:
-    def __init__(self, token, proxy="", name="", DEBUG=False):
+    @log_exceptions(logger)
+    def __init__(self, token, proxy="", name="Neko"):
         self.__token__ = token
         self.__proxy__ = {'https': proxy, 'http': proxy}
         self.__name__ = name
-        self.logger = logging.getLogger(name)
-
-        if DEBUG:
-            self.logger.setLevel(logging.DEBUG)
-
-        self.logger.info(f"init bot {name}")
 
         try:
             self.getMe()
         except Exception:
-            self.logger.error("Can't connect telegram service or wrong token")
             raise Exception("Can't connect telegram service or wrong token.")
 
     def __str__(self):
         return str(self.getMe())
 
     def __repr__(self):
-        return self.__name__
+        return f"bot<{self.__name__}>"
 
     # properties
 
@@ -45,13 +37,13 @@ class bot:
         return f"https://api.telegram.org/bot{self.__token__}/"
 
     # API functions
-    @log_full(logger)
-    @log_timer(logger)
+    @log_timer()
+    @log_full()
     def getMe(self):
         return User(post(self, 'getMe'))
 
-    @log_full(logger)
-    @log_timer(logger)
+    @log_timer()
+    @log_full()
     def getUpdates(self, **argv):
         params_table = {
             'offset': int,

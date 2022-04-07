@@ -1,20 +1,25 @@
-from tgbot.bits.strings import decorating
+from tgbot.bits.strings import decorating, str_type
 import functools
 import logging
 import time
+from tgbot import is_debug
 
 
-def bread(begin=None, end=None):
+def bread(begin=None, end=None, exp=None):
     def decorator(f):
 
         @functools.wraps(f)
         def wrapper(*args, **kwargs):
-            message = None
 
             if begin is not None:
                 message = begin(f, *args, **kwargs)
-
-            ret = f(*args, **kwargs)
+            else:
+                message = None
+            try:
+                ret = f(*args, **kwargs)
+            except Exception as e:
+                exp(e)
+                raise e
 
             if end is not None:
                 if message is not None:
@@ -32,23 +37,24 @@ def bread(begin=None, end=None):
 
 
 def log_enter(logger=None, logArgs=False):
-    def log(f, *args, **kwargs):
+    def log_debug(f, *args, **kwargs):
         if logArgs:
             arg = "(" + ", ".join([repr(x) for x in args] + [f"{k}={v!r}" for k, v in kwargs.items()]) + ")"
             message = f"Calling {decorating(f.__name__, 32)}{arg}"
         else:
             message = f"+ {decorating(f.__name__, 32)}"
 
-        if logger is None:
+        if logger is not None:
             logging.debug(message)
         else:
-            logger.debug(message)
+            print(message)
 
-    return log
+    if is_debug:
+        return log_debug
 
 
 def log_exit(logger=None, logRets=False):
-    def log(f, *args, **kwargs):
+    def log_debug(f, *args, **kwargs):
         if logRets:
             ret = " returned " + repr(kwargs['message_by_function'])
             message = f"{decorating(f.__name__, 31)}{ret}"
@@ -58,9 +64,10 @@ def log_exit(logger=None, logRets=False):
         if logger is not None:
             logger.debug(message)
         else:
-            logging.debug(message)
+            print(message)
 
-    return log
+    if is_debug:
+        return log_debug
 
 
 def log_full(logger=None):
@@ -79,6 +86,19 @@ def log_timer(logger=None):
         if logger is not None:
             logger.debug(f"for {decorating(time.perf_counter() - kwargs['message_by_begin'], 32)}s")
         else:
-            logging.debug(f"for {decorating(time.perf_counter() - kwargs['message_by_begin'], 32)}s")
+            print(f"for {decorating(time.perf_counter() - kwargs['message_by_begin'], 32)}s")
 
-    return bread(begin, end)
+    if is_debug:
+        return bread(begin, end)
+    else:
+        return bread()
+
+
+def log_exceptions(logger=None):
+    def log_error(e):
+        if logger is not None:
+            logger.error(decorating(f"{str_type(e)} : {e}", 31))
+        else:
+            print(decorating(f"{str_type(e)} : {e}", 31))
+
+    return bread(exp=log_error)

@@ -16,6 +16,8 @@ def str_type(x):
         s = decorating(s, 36)
     elif s == 'str':
         s = decorating(s, 33)
+    elif isinstance(x, BaseException):
+        s = s
     else:
         s = s.split('.')[-1]
         s = decorating("%s<at %s>" % (s, hex(id(x))), '30;47')

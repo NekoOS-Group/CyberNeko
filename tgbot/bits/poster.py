@@ -1,7 +1,10 @@
 import requests
 import json
+from tgbot.bits.decorators import log_exceptions
+from tgbot import logger
 
 
+@log_exceptions(logger)
 def __post__(url, command, params, proxy):
     r = requests.get(url + command, params=params, proxies=proxy)
     if r.status_code != 200:
@@ -18,6 +21,7 @@ def post(bot, command, params=""):
     return __post__(bot.url, command, params, bot.proxy)
 
 
+@log_exceptions(logger)
 def confirm_params(params_table, params):
     for x, y in params.items():
         if params_table[x] is None:
