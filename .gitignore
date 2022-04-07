@@ -127,3 +127,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+/mytoken.txt
+/__tmp__/api.html

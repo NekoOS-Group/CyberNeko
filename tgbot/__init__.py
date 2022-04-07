@@ -9,5 +9,8 @@ def set_logger(new_logger):
     logger = new_logger
 
 
-from tgbot.tgapi import bot
+from tgbot.bot import bot
+from tgbot.tgapi import basic_bot
 from tgbot.tgtypes import *
+from tgbot.bits.decorators import handle
+from tgbot.bits.controller import timer

@@ -102,3 +102,18 @@ def log_exceptions(logger=None):
             print(decorating(f"{str_type(e)} : {e}", 31))
 
     return bread(exp=log_error)
+
+
+def handle(*events):
+    def decorator(f):
+
+        for e in events:
+            e.hock(f)
+
+        @functools.wraps(f)
+        def wrapper(*args, **kwargs):
+            return f(*args, **kwargs)
+
+        return wrapper
+
+    return decorator

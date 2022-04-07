@@ -1,5 +1,5 @@
 # CyberNeko
-<p text-align=center>design your own telegram bot from zero</p>
+<p align="center">design your own telegram bot from zero</p>
 
 ## Content
 

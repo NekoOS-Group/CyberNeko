@@ -33,7 +33,6 @@ class tgtype:
     def __tree__(self, offset=""):
         s = ""
         for x, y in self.__dict__.items():
-            tail = ["├─ ", "└─ "][int(x == list(self.__dict__.keys())[-1])]
             tail = "├─ " if x != list(self.__dict__.keys())[-1] else "└─ "
             addi = "│  " if x != list(self.__dict__.keys())[-1] else "   "
             if isinstance(y, list):

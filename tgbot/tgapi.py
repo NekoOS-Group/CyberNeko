@@ -4,7 +4,7 @@ from tgbot.tgtypes import *
 from tgbot import logger
 
 
-class bot:
+class basic_bot:
     @log_exceptions(logger)
     def __init__(self, token, proxy="", name="Neko"):
         self.__token__ = token
