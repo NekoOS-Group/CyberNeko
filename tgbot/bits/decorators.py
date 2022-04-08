@@ -2,7 +2,9 @@ from tgbot.bits.strings import decorating, str_type
 import functools
 import logging
 import time
-from tgbot import is_debug
+from tgbot.globe import bot_debug
+
+__all__ = ['log_full', 'log_stack', 'log_timer', 'log_exceptions', 'with_info', 'handle']
 
 
 def bread(begin=None, end=None, exp=None):
@@ -49,7 +51,7 @@ def log_enter(logger=None, logArgs=False):
         else:
             print(message)
 
-    if is_debug:
+    if bot_debug:
         return log_debug
 
 
@@ -66,7 +68,7 @@ def log_exit(logger=None, logRets=False):
         else:
             print(message)
 
-    if is_debug:
+    if bot_debug:
         return log_debug
 
 
@@ -88,7 +90,7 @@ def log_timer(logger=None):
         else:
             print(f"for {decorating(time.perf_counter() - kwargs['message_by_begin'], 32)}s")
 
-    if is_debug:
+    if bot_debug:
         return bread(begin, end)
     else:
         return bread()
@@ -104,9 +106,20 @@ def log_exceptions(logger=None):
     return bread(exp=log_error)
 
 
+def with_info(handler, begin=None, end=None):
+    def info_begin(f, *args, **kwargs):
+        if begin is not None:
+            handler(begin)
+
+    def info_end(f, *args, **kwargs):
+        if end is not None:
+            handler(end)
+
+    return bread(info_begin, info_end)
+
+
 def handle(*events):
     def decorator(f):
-
         for e in events:
             e.hock(f)
 

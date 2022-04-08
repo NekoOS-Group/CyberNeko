@@ -1,23 +1,36 @@
 from tgbot.bits.decorators import log_full, log_stack, log_timer, log_exceptions
-from tgbot.bits.poster import post, confirm_params
+from tgbot.bits.poster import confirm_params, post as __post__
 from tgbot.tgtypes import *
-from tgbot import logger
+from tgbot import bot_logger
+from tgbot.globe import bot_namelist
+
+
+def post(bot, command, params=None):
+    return __post__(bot.url, command, params, bot.proxy)
 
 
 class basic_bot:
-    @log_exceptions(logger)
-    def __init__(self, token, proxy="", name="Neko"):
+    @log_exceptions(bot_logger)
+    def __init__(self, token, proxy="", name=None):
         self.__token__ = token
         self.__proxy__ = {'https': proxy, 'http': proxy}
         self.__name__ = name
 
+        if name is None:
+            name = hex(id(self))
+
+        if bot_namelist.get(name) is not None:
+            raise Exception("Can't register bot in same name twice")
+        else:
+            bot_namelist[name] = self
+
         try:
-            self.getMe()
+            self.me = self.getMe()
         except Exception:
             raise Exception("Can't connect telegram service or wrong token.")
 
     def __str__(self):
-        return str(self.getMe())
+        return str(self.me)
 
     def __repr__(self):
         return f"bot<{self.__name__}>"

@@ -1,6 +1,8 @@
 import threading
 import time
 
+__all__ = ['event', 'timer']
+
 
 class event:
     def __init__(self):

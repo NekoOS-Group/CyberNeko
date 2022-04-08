@@ -1,6 +1,5 @@
-from tgbot.bits.strings import str_type, str_val, decorating
-
-import warnings
+from tgbot.bits.strings import *
+from tgbot.globe import log_warn
 
 
 class tgtype:
@@ -14,7 +13,7 @@ class tgtype:
             try:
                 typeVal = self.__type_table__[name]
             except KeyError:
-                warnings.warn(f"Unprocessed param {name}", RuntimeWarning)
+                log_warn(f"Unprocessed param {name}")
                 continue
 
             if type(typeVal) != list:

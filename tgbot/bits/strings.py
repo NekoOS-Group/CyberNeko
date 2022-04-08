@@ -1,3 +1,6 @@
+__all__ = ['decorating', 'transfer', 'str_type', 'str_val']
+
+
 def decorating(x, command=30, default=37):
     return "\033[%sm%s\033[0m\033[%sm" % (str(command), x, str(default))
 
