@@ -1,11 +1,12 @@
 import functools
 import time
 
-from tgbot.bits.strings import decorating, str_type
+from .strings import decorating, str_type
 
 __all__ = ['log_full', 'log_stack', 'log_timer', 'log_exceptions', 'with_info', 'handle']
 
 
+# bread is very delicious
 def bread(begin=None, end=None, exp=None):
     def decorator(f):
 
@@ -106,25 +107,28 @@ def log_exceptions(logger=None):
     return bread(exp=log_error)
 
 
-def with_info(handler, begin=None, end=None, report_me=False):
+def with_info(handler, begin=None, end=None, report_params=False):
     def info_begin(f, *args, **kwargs):
         if begin is not None:
-            if report_me:
-                handler(begin, args[0])
+            if report_params:
+                handler(begin, *args, **kwargs)
             else:
                 handler(begin)
 
     def info_end(f, *args, **kwargs):
         if end is not None:
-            if report_me:
-                handler(end, args[0])
+            if report_params:
+                handler(end, *args, **kwargs)
             else:
                 handler(end)
 
     return bread(info_begin, info_end)
 
 
-def handle(*events):
+from .controller import event
+
+
+def handle(*events: event):
     def decorator(f):
         for e in events:
             e.hock(f)

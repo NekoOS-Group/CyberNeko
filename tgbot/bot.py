@@ -7,7 +7,7 @@ from tgbot.globe import event
 
 
 class bot(basic_bot):
-    @with_info(log_info, end="initialized successfully", report_me=True)
+    @with_info(log_info, end="initialized successfully", report_params=True)
     def __init__(self, token, proxy="", name=None):
         super(bot, self).__init__(token, proxy, name)
         self.received_message = event(self, name='received_message')

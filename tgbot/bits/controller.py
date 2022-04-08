@@ -26,11 +26,22 @@ class event:
 
 
 class timer:
-    def __init__(self, interval=0):
+    __id__ = 0
+
+    def __init__(self, name=None, interval=0):
         self.on = False
         self.interval = interval
         self.tick = event(self, 'tick')
         self.thread = None
+        timer.__id__ += 1
+        self.id = timer.__id__
+        if name is not None:
+            self.name = name
+        else:
+            self.name = hex(id(self))
+
+    def __repr__(self):
+        return f"<timer {self.id} : {self.name}>"
 
     def run(self):
         self.on = True

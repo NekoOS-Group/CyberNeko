@@ -1,9 +1,14 @@
+from tgbot.bits.decorators import with_info
 from tgbot.tgtypes import *
 from tgbot.globe import *
 
 
-def __post__(bot, command, params=None):
-    return post(bot.url, command, params, bot.proxy)
+def log_api(message, *args):
+    if len(args) > 2:
+        params = ", ".join([f"{k}={v!r}" for k, v in args[-1].items()])
+    else:
+        params = ""
+    log_info(f"{repr(args[0])} calling API {decorating(args[1], 32)}({params})")
 
 
 class basic_bot:
@@ -32,6 +37,10 @@ class basic_bot:
     def __repr__(self):
         return f"bot<{self.__name__}>"
 
+    @with_info(log_api, begin='', report_params=True)
+    def __post__(self, command, params=None):
+        return post(self.url, command, params, self.proxy)
+
     # properties
 
     @property
@@ -47,13 +56,9 @@ class basic_bot:
         return f"https://api.telegram.org/bot{self.__token__}/"
 
     # API functions
-    @log_timer
-    @log_full
     def getMe(self):
-        return User(__post__(self, 'getMe'))
+        return User(self.__post__('getMe'))
 
-    @log_timer
-    @log_full
     def getUpdates(self, **argv):
         params_table = {
             'offset': int,
@@ -62,7 +67,7 @@ class basic_bot:
             'allowed_updates': list,
         }
         verify_params(params_table, argv)
-        return [Update(x) for x in __post__(self, 'getUpdates', argv)]
+        return [Update(x) for x in self.__post__('getUpdates', argv)]
 
     def setWebhook(self, url, **argv):
         params_table = {
@@ -75,17 +80,17 @@ class basic_bot:
         }
         argv['url'] = url
         verify_params(params_table, argv)
-        return __post__(self, 'setWebhook', argv)
+        return self.__post__('setWebhook', argv)
 
     def deleteWebhook(self, **argv):
         params_table = {
             'drop_pending_updates': bool,
         }
         verify_params(params_table, argv)
-        return __post__(self, 'deleteWebhook', argv)
+        return self.__post__('deleteWebhook', argv)
 
     def getWebhookInfo(self):
-        return WebhookInfo(__post__(self, 'getWebhookInfo'))
+        return WebhookInfo(self.__post__('getWebhookInfo'))
 
     def sendMessage(self, chat_id, text, **argv):
         params_table = {
@@ -103,7 +108,7 @@ class basic_bot:
         argv['chat_id'] = chat_id
         argv['text'] = text
         verify_params(params_table, argv)
-        return Message(__post__(self, 'sendMessage', argv))
+        return Message(self.__post__('sendMessage', argv))
 
     def forwardMessage(self, chat_id, from_chat_id, message_id, **argv):
         params_table = {
@@ -117,7 +122,7 @@ class basic_bot:
         argv['from_chat_id'] = from_chat_id
         argv['message_id'] = message_id
         verify_params(params_table, argv)
-        return Message(__post__(self, 'forwardMessage', argv))
+        return Message(self.__post__('forwardMessage', argv))
 
     def copyMessage(self, chat_id, from_chat_id, message_id, **argv):
         params_table = {
@@ -137,7 +142,7 @@ class basic_bot:
         argv['from_chat_id'] = from_chat_id
         argv['message_id'] = message_id
         verify_params(params_table, argv)
-        return MessageId(__post__(self, 'copyMessage', argv))
+        return MessageId(self.__post__('copyMessage', argv))
 
     def sendPhoto(self, chat_id, photo, **argv):
         params_table = {
@@ -155,7 +160,7 @@ class basic_bot:
         argv['chat_id'] = chat_id
         argv['photo'] = photo
         verify_params(params_table, argv)
-        return Message(__post__(self, 'sendPhoto', argv))
+        return Message(self.__post__('sendPhoto', argv))
 
     def sendAudio(self, chat_id, audio, **argv):
         params_table = {
@@ -177,7 +182,7 @@ class basic_bot:
         argv['chat_id'] = chat_id
         argv['audio'] = audio
         verify_params(params_table, argv)
-        return Message(__post__(self, 'sendAudio', argv))
+        return Message(self.__post__('sendAudio', argv))
 
     def sendDocument(self, chat_id, document, **argv):
         params_table = {
@@ -197,7 +202,7 @@ class basic_bot:
         argv['chat_id'] = chat_id
         argv['document'] = document
         verify_params(params_table, argv)
-        return Message(__post__(self, 'sendDocument', argv))
+        return Message(self.__post__('sendDocument', argv))
 
     def sendVideo(self, chat_id, video, **argv):
         params_table = {
@@ -220,7 +225,7 @@ class basic_bot:
         argv['chat_id'] = chat_id
         argv['video'] = video
         verify_params(params_table, argv)
-        return Message(__post__(self, 'sendVideo', argv))
+        return Message(self.__post__('sendVideo', argv))
 
     def sendAnimation(self, chat_id, animation, **argv):
         params_table = {
@@ -242,7 +247,7 @@ class basic_bot:
         argv['chat_id'] = chat_id
         argv['animation'] = animation
         verify_params(params_table, argv)
-        return Message(__post__(self, 'sendAnimation', argv))
+        return Message(self.__post__('sendAnimation', argv))
 
     def sendVoice(self, chat_id, voice, **argv):
         params_table = {
@@ -261,7 +266,7 @@ class basic_bot:
         argv['chat_id'] = chat_id
         argv['voice'] = voice
         verify_params(params_table, argv)
-        return Message(__post__(self, 'sendVoice', argv))
+        return Message(self.__post__('sendVoice', argv))
 
     def sendVideoNote(self, chat_id, video_note, **argv):
         params_table = {
@@ -279,7 +284,7 @@ class basic_bot:
         argv['chat_id'] = chat_id
         argv['video_note'] = video_note
         verify_params(params_table, argv)
-        return Message(__post__(self, 'sendVideoNote', argv))
+        return Message(self.__post__('sendVideoNote', argv))
 
     def sendMediaGroup(self, chat_id, media, **argv):
         params_table = {
@@ -293,7 +298,7 @@ class basic_bot:
         argv['chat_id'] = chat_id
         argv['media'] = media
         verify_params(params_table, argv)
-        return Message(__post__(self, 'sendMediaGroup', argv))
+        return Message(self.__post__('sendMediaGroup', argv))
 
     def sendLocation(self, chat_id, latitude, longitude, **argv):
         params_table = {
@@ -314,7 +319,7 @@ class basic_bot:
         argv['latitude'] = latitude
         argv['longitude'] = longitude
         verify_params(params_table, argv)
-        return Message(__post__(self, 'sendLocation', argv))
+        return Message(self.__post__('sendLocation', argv))
 
     def editMessageLiveLocation(self, latitude, longitude, **argv):
         params_table = {
@@ -331,7 +336,7 @@ class basic_bot:
         argv['latitude'] = latitude
         argv['longitude'] = longitude
         verify_params(params_table, argv)
-        return __post__(self, 'editMessageLiveLocation', argv)
+        return self.__post__('editMessageLiveLocation', argv)
 
     def stopMessageLiveLocation(self, **argv):
         params_table = {
@@ -341,7 +346,7 @@ class basic_bot:
             'reply_markup': InlineKeyboardMarkup,
         }
         verify_params(params_table, argv)
-        return __post__(self, 'stopMessageLiveLocation', argv)
+        return self.__post__('stopMessageLiveLocation', argv)
 
     def sendVenue(self, chat_id, latitude, longitude, title, address, **argv):
         params_table = {
@@ -366,7 +371,7 @@ class basic_bot:
         argv['title'] = title
         argv['address'] = address
         verify_params(params_table, argv)
-        return Message(__post__(self, 'sendVenue', argv))
+        return Message(self.__post__('sendVenue', argv))
 
     def sendContact(self, chat_id, phone_number, first_name, **argv):
         params_table = {
@@ -385,7 +390,7 @@ class basic_bot:
         argv['phone_number'] = phone_number
         argv['first_name'] = first_name
         verify_params(params_table, argv)
-        return Message(__post__(self, 'sendContact', argv))
+        return Message(self.__post__('sendContact', argv))
 
     def sendPoll(self, chat_id, question, options, **argv):
         params_table = {
@@ -412,7 +417,7 @@ class basic_bot:
         argv['question'] = question
         argv['options'] = options
         verify_params(params_table, argv)
-        return Message(__post__(self, 'sendPoll', argv))
+        return Message(self.__post__('sendPoll', argv))
 
     def sendDice(self, chat_id, **argv):
         params_table = {
@@ -426,7 +431,7 @@ class basic_bot:
         }
         argv['chat_id'] = chat_id
         verify_params(params_table, argv)
-        return Message(__post__(self, 'sendDice', argv))
+        return Message(self.__post__('sendDice', argv))
 
     def sendChatAction(self, chat_id, action, **argv):
         params_table = {
@@ -436,7 +441,7 @@ class basic_bot:
         argv['chat_id'] = chat_id
         argv['action'] = action
         verify_params(params_table, argv)
-        return __post__(self, 'sendChatAction', argv)
+        return self.__post__('sendChatAction', argv)
 
     def getUserProfilePhotos(self, user_id, **argv):
         params_table = {
@@ -446,7 +451,7 @@ class basic_bot:
         }
         argv['user_id'] = user_id
         verify_params(params_table, argv)
-        return UserProfilePhotos(__post__(self, 'getUserProfilePhotos', argv))
+        return UserProfilePhotos(self.__post__('getUserProfilePhotos', argv))
 
     def getFile(self, file_id, **argv):
         params_table = {
@@ -454,7 +459,7 @@ class basic_bot:
         }
         argv['file_id'] = file_id
         verify_params(params_table, argv)
-        return File(__post__(self, 'getFile', argv))
+        return File(self.__post__('getFile', argv))
 
     def banChatMember(self, chat_id, user_id, **argv):
         params_table = {
@@ -466,7 +471,7 @@ class basic_bot:
         argv['chat_id'] = chat_id
         argv['user_id'] = user_id
         verify_params(params_table, argv)
-        return __post__(self, 'banChatMember', argv)
+        return self.__post__('banChatMember', argv)
 
     def unbanChatMember(self, chat_id, user_id, **argv):
         params_table = {
@@ -477,7 +482,7 @@ class basic_bot:
         argv['chat_id'] = chat_id
         argv['user_id'] = user_id
         verify_params(params_table, argv)
-        return __post__(self, 'unbanChatMember', argv)
+        return self.__post__('unbanChatMember', argv)
 
     def restrictChatMember(self, chat_id, user_id, permissions, **argv):
         params_table = {
@@ -490,7 +495,7 @@ class basic_bot:
         argv['user_id'] = user_id
         argv['permissions'] = permissions
         verify_params(params_table, argv)
-        return __post__(self, 'restrictChatMember', argv)
+        return self.__post__('restrictChatMember', argv)
 
     def promoteChatMember(self, chat_id, user_id, **argv):
         params_table = {
@@ -511,7 +516,7 @@ class basic_bot:
         argv['chat_id'] = chat_id
         argv['user_id'] = user_id
         verify_params(params_table, argv)
-        return __post__(self, 'promoteChatMember', argv)
+        return self.__post__('promoteChatMember', argv)
 
     def setChatAdministratorCustomTitle(self, chat_id, user_id, custom_title, **argv):
         params_table = {
@@ -523,7 +528,7 @@ class basic_bot:
         argv['user_id'] = user_id
         argv['custom_title'] = custom_title
         verify_params(params_table, argv)
-        return __post__(self, 'setChatAdministratorCustomTitle', argv)
+        return self.__post__('setChatAdministratorCustomTitle', argv)
 
     def banChatSenderChat(self, chat_id, sender_chat_id, **argv):
         params_table = {
@@ -533,7 +538,7 @@ class basic_bot:
         argv['chat_id'] = chat_id
         argv['sender_chat_id'] = sender_chat_id
         verify_params(params_table, argv)
-        return __post__(self, 'banChatSenderChat', argv)
+        return self.__post__('banChatSenderChat', argv)
 
     def unbanChatSenderChat(self, chat_id, sender_chat_id, **argv):
         params_table = {
@@ -543,7 +548,7 @@ class basic_bot:
         argv['chat_id'] = chat_id
         argv['sender_chat_id'] = sender_chat_id
         verify_params(params_table, argv)
-        return __post__(self, 'unbanChatSenderChat', argv)
+        return self.__post__('unbanChatSenderChat', argv)
 
     def setChatPermissions(self, chat_id, permissions, **argv):
         params_table = {
@@ -553,7 +558,7 @@ class basic_bot:
         argv['chat_id'] = chat_id
         argv['permissions'] = permissions
         verify_params(params_table, argv)
-        return __post__(self, 'setChatPermissions', argv)
+        return self.__post__('setChatPermissions', argv)
 
     def exportChatInviteLink(self, chat_id, **argv):
         params_table = {
@@ -561,7 +566,7 @@ class basic_bot:
         }
         argv['chat_id'] = chat_id
         verify_params(params_table, argv)
-        return __post__(self, 'exportChatInviteLink', argv)
+        return self.__post__('exportChatInviteLink', argv)
 
     def createChatInviteLink(self, chat_id, **argv):
         params_table = {
@@ -573,7 +578,7 @@ class basic_bot:
         }
         argv['chat_id'] = chat_id
         verify_params(params_table, argv)
-        return ChatInviteLink(__post__(self, 'createChatInviteLink', argv))
+        return ChatInviteLink(self.__post__('createChatInviteLink', argv))
 
     def editChatInviteLink(self, chat_id, invite_link, **argv):
         params_table = {
@@ -587,7 +592,7 @@ class basic_bot:
         argv['chat_id'] = chat_id
         argv['invite_link'] = invite_link
         verify_params(params_table, argv)
-        return ChatInviteLink(__post__(self, 'editChatInviteLink', argv))
+        return ChatInviteLink(self.__post__('editChatInviteLink', argv))
 
     def revokeChatInviteLink(self, chat_id, invite_link, **argv):
         params_table = {
@@ -597,7 +602,7 @@ class basic_bot:
         argv['chat_id'] = chat_id
         argv['invite_link'] = invite_link
         verify_params(params_table, argv)
-        return ChatInviteLink(__post__(self, 'revokeChatInviteLink', argv))
+        return ChatInviteLink(self.__post__('revokeChatInviteLink', argv))
 
     def approveChatJoinRequest(self, chat_id, user_id, **argv):
         params_table = {
@@ -607,7 +612,7 @@ class basic_bot:
         argv['chat_id'] = chat_id
         argv['user_id'] = user_id
         verify_params(params_table, argv)
-        return __post__(self, 'approveChatJoinRequest', argv)
+        return self.__post__('approveChatJoinRequest', argv)
 
     def declineChatJoinRequest(self, chat_id, user_id, **argv):
         params_table = {
@@ -617,7 +622,7 @@ class basic_bot:
         argv['chat_id'] = chat_id
         argv['user_id'] = user_id
         verify_params(params_table, argv)
-        return __post__(self, 'declineChatJoinRequest', argv)
+        return self.__post__('declineChatJoinRequest', argv)
 
     def setChatPhoto(self, chat_id, photo, **argv):
         params_table = {
@@ -627,7 +632,7 @@ class basic_bot:
         argv['chat_id'] = chat_id
         argv['photo'] = photo
         verify_params(params_table, argv)
-        return __post__(self, 'setChatPhoto', argv)
+        return self.__post__('setChatPhoto', argv)
 
     def deleteChatPhoto(self, chat_id, **argv):
         params_table = {
@@ -635,7 +640,7 @@ class basic_bot:
         }
         argv['chat_id'] = chat_id
         verify_params(params_table, argv)
-        return __post__(self, 'deleteChatPhoto', argv)
+        return self.__post__('deleteChatPhoto', argv)
 
     def setChatTitle(self, chat_id, title, **argv):
         params_table = {
@@ -645,7 +650,7 @@ class basic_bot:
         argv['chat_id'] = chat_id
         argv['title'] = title
         verify_params(params_table, argv)
-        return __post__(self, 'setChatTitle', argv)
+        return self.__post__('setChatTitle', argv)
 
     def setChatDescription(self, chat_id, **argv):
         params_table = {
@@ -654,7 +659,7 @@ class basic_bot:
         }
         argv['chat_id'] = chat_id
         verify_params(params_table, argv)
-        return __post__(self, 'setChatDescription', argv)
+        return self.__post__('setChatDescription', argv)
 
     def pinChatMessage(self, chat_id, message_id, **argv):
         params_table = {
@@ -665,7 +670,7 @@ class basic_bot:
         argv['chat_id'] = chat_id
         argv['message_id'] = message_id
         verify_params(params_table, argv)
-        return __post__(self, 'pinChatMessage', argv)
+        return self.__post__('pinChatMessage', argv)
 
     def unpinChatMessage(self, chat_id, **argv):
         params_table = {
@@ -674,7 +679,7 @@ class basic_bot:
         }
         argv['chat_id'] = chat_id
         verify_params(params_table, argv)
-        return __post__(self, 'unpinChatMessage', argv)
+        return self.__post__('unpinChatMessage', argv)
 
     def unpinAllChatMessages(self, chat_id, **argv):
         params_table = {
@@ -682,7 +687,7 @@ class basic_bot:
         }
         argv['chat_id'] = chat_id
         verify_params(params_table, argv)
-        return __post__(self, 'unpinAllChatMessages', argv)
+        return self.__post__('unpinAllChatMessages', argv)
 
     def leaveChat(self, chat_id, **argv):
         params_table = {
@@ -690,7 +695,7 @@ class basic_bot:
         }
         argv['chat_id'] = chat_id
         verify_params(params_table, argv)
-        return __post__(self, 'leaveChat', argv)
+        return self.__post__('leaveChat', argv)
 
     def getChat(self, chat_id, **argv):
         params_table = {
@@ -698,7 +703,7 @@ class basic_bot:
         }
         argv['chat_id'] = chat_id
         verify_params(params_table, argv)
-        return Chat(__post__(self, 'getChat', argv))
+        return Chat(self.__post__('getChat', argv))
 
     def getChatAdministrators(self, chat_id, **argv):
         params_table = {
@@ -706,7 +711,7 @@ class basic_bot:
         }
         argv['chat_id'] = chat_id
         verify_params(params_table, argv)
-        return [ChatMember(x) for x in __post__(self, 'getChatAdministrators', argv)]
+        return [ChatMember(x) for x in self.__post__('getChatAdministrators', argv)]
 
     def getChatMemberCount(self, chat_id, **argv):
         params_table = {
@@ -714,7 +719,7 @@ class basic_bot:
         }
         argv['chat_id'] = chat_id
         verify_params(params_table, argv)
-        return __post__(self, 'getChatMemberCount', argv)
+        return self.__post__('getChatMemberCount', argv)
 
     def getChatMember(self, chat_id, user_id, **argv):
         params_table = {
@@ -724,7 +729,7 @@ class basic_bot:
         argv['chat_id'] = chat_id
         argv['user_id'] = user_id
         verify_params(params_table, argv)
-        return [ChatMember(x) for x in __post__(self, 'getChatMember', argv)]
+        return [ChatMember(x) for x in self.__post__('getChatMember', argv)]
 
     def setChatStickerSet(self, chat_id, sticker_set_name, **argv):
         params_table = {
@@ -734,7 +739,7 @@ class basic_bot:
         argv['chat_id'] = chat_id
         argv['sticker_set_name'] = sticker_set_name
         verify_params(params_table, argv)
-        return __post__(self, 'setChatStickerSet', argv)
+        return self.__post__('setChatStickerSet', argv)
 
     def deleteChatStickerSet(self, chat_id, **argv):
         params_table = {
@@ -742,7 +747,7 @@ class basic_bot:
         }
         argv['chat_id'] = chat_id
         verify_params(params_table, argv)
-        return __post__(self, 'deleteChatStickerSet', argv)
+        return self.__post__('deleteChatStickerSet', argv)
 
     def answerCallbackQuery(self, callback_query_id, **argv):
         params_table = {
@@ -754,7 +759,7 @@ class basic_bot:
         }
         argv['callback_query_id'] = callback_query_id
         verify_params(params_table, argv)
-        return __post__(self, 'answerCallbackQuery', argv)
+        return self.__post__('answerCallbackQuery', argv)
 
     def setMyCommands(self, commands, **argv):
         params_table = {
@@ -764,7 +769,7 @@ class basic_bot:
         }
         argv['commands'] = commands
         verify_params(params_table, argv)
-        return __post__(self, 'setMyCommands', argv)
+        return self.__post__('setMyCommands', argv)
 
     def deleteMyCommands(self, **argv):
         params_table = {
@@ -772,7 +777,7 @@ class basic_bot:
             'language_code': str,
         }
         verify_params(params_table, argv)
-        return __post__(self, 'deleteMyCommands', argv)
+        return self.__post__('deleteMyCommands', argv)
 
     def getMyCommands(self, **argv):
         params_table = {
@@ -780,7 +785,7 @@ class basic_bot:
             'language_code': str,
         }
         verify_params(params_table, argv)
-        return [BotCommand(x) for x in __post__(self, 'getMyCommands', argv)]
+        return [BotCommand(x) for x in self.__post__('getMyCommands', argv)]
 
     def editMessageText(self, text, **argv):
         params_table = {
@@ -795,7 +800,7 @@ class basic_bot:
         }
         argv['text'] = text
         verify_params(params_table, argv)
-        return Message(__post__(self, 'editMessageText', argv))
+        return Message(self.__post__('editMessageText', argv))
 
     def editMessageCaption(self, **argv):
         params_table = {
@@ -808,7 +813,7 @@ class basic_bot:
             'reply_markup': InlineKeyboardMarkup,
         }
         verify_params(params_table, argv)
-        return Message(__post__(self, 'editMessageCaption', argv))
+        return Message(self.__post__('editMessageCaption', argv))
 
     def editMessageMedia(self, media, **argv):
         params_table = {
@@ -820,7 +825,7 @@ class basic_bot:
         }
         argv['media'] = media
         verify_params(params_table, argv)
-        return Message(__post__(self, 'editMessageMedia', argv))
+        return Message(self.__post__('editMessageMedia', argv))
 
     def editMessageReplyMarkup(self, **argv):
         params_table = {
@@ -830,7 +835,7 @@ class basic_bot:
             'reply_markup': InlineKeyboardMarkup,
         }
         verify_params(params_table, argv)
-        return Message(__post__(self, 'editMessageReplyMarkup', argv))
+        return Message(self.__post__('editMessageReplyMarkup', argv))
 
     def stopPoll(self, chat_id, message_id, **argv):
         params_table = {
@@ -841,7 +846,7 @@ class basic_bot:
         argv['chat_id'] = chat_id
         argv['message_id'] = message_id
         verify_params(params_table, argv)
-        return Poll(__post__(self, 'stopPoll', argv))
+        return Poll(self.__post__('stopPoll', argv))
 
     def deleteMessage(self, chat_id, message_id, **argv):
         params_table = {
@@ -851,7 +856,7 @@ class basic_bot:
         argv['chat_id'] = chat_id
         argv['message_id'] = message_id
         verify_params(params_table, argv)
-        return __post__(self, 'deleteMessage', argv)
+        return self.__post__('deleteMessage', argv)
 
     def sendSticker(self, chat_id, sticker, **argv):
         params_table = {
@@ -866,7 +871,7 @@ class basic_bot:
         argv['chat_id'] = chat_id
         argv['sticker'] = sticker
         verify_params(params_table, argv)
-        return Message(__post__(self, 'sendSticker', argv))
+        return Message(self.__post__('sendSticker', argv))
 
     def getStickerSet(self, name, **argv):
         params_table = {
@@ -874,7 +879,7 @@ class basic_bot:
         }
         argv['name'] = name
         verify_params(params_table, argv)
-        return StickerSet(__post__(self, 'getStickerSet', argv))
+        return StickerSet(self.__post__('getStickerSet', argv))
 
     def uploadStickerFile(self, user_id, png_sticker, **argv):
         params_table = {
@@ -884,7 +889,7 @@ class basic_bot:
         argv['user_id'] = user_id
         argv['png_sticker'] = png_sticker
         verify_params(params_table, argv)
-        return File(__post__(self, 'uploadStickerFile', argv))
+        return File(self.__post__('uploadStickerFile', argv))
 
     def createNewStickerSet(self, user_id, name, title, emojis, **argv):
         params_table = {
@@ -903,7 +908,7 @@ class basic_bot:
         argv['title'] = title
         argv['emojis'] = emojis
         verify_params(params_table, argv)
-        return __post__(self, 'createNewStickerSet', argv)
+        return self.__post__('createNewStickerSet', argv)
 
     def addStickerToSet(self, user_id, name, emojis, **argv):
         params_table = {
@@ -919,7 +924,7 @@ class basic_bot:
         argv['name'] = name
         argv['emojis'] = emojis
         verify_params(params_table, argv)
-        return __post__(self, 'addStickerToSet', argv)
+        return self.__post__('addStickerToSet', argv)
 
     def setStickerPositionInSet(self, sticker, position, **argv):
         params_table = {
@@ -929,7 +934,7 @@ class basic_bot:
         argv['sticker'] = sticker
         argv['position'] = position
         verify_params(params_table, argv)
-        return __post__(self, 'setStickerPositionInSet', argv)
+        return self.__post__('setStickerPositionInSet', argv)
 
     def deleteStickerFromSet(self, sticker, **argv):
         params_table = {
@@ -937,7 +942,7 @@ class basic_bot:
         }
         argv['sticker'] = sticker
         verify_params(params_table, argv)
-        return __post__(self, 'deleteStickerFromSet', argv)
+        return self.__post__('deleteStickerFromSet', argv)
 
     def setStickerSetThumb(self, name, user_id, **argv):
         params_table = {
@@ -948,7 +953,7 @@ class basic_bot:
         argv['name'] = name
         argv['user_id'] = user_id
         verify_params(params_table, argv)
-        return __post__(self, 'setStickerSetThumb', argv)
+        return self.__post__('setStickerSetThumb', argv)
 
     def answerInlineQuery(self, inline_query_id, results, **argv):
         params_table = {
@@ -963,7 +968,7 @@ class basic_bot:
         argv['inline_query_id'] = inline_query_id
         argv['results'] = results
         verify_params(params_table, argv)
-        return __post__(self, 'answerInlineQuery', argv)
+        return self.__post__('answerInlineQuery', argv)
 
     def sendInvoice(self, chat_id, title, description, payload, provider_token, currency, prices, **argv):
         params_table = {
@@ -1003,7 +1008,7 @@ class basic_bot:
         argv['currency'] = currency
         argv['prices'] = prices
         verify_params(params_table, argv)
-        return Message(__post__(self, 'sendInvoice', argv))
+        return Message(self.__post__('sendInvoice', argv))
 
     def answerShippingQuery(self, shipping_query_id, ok, **argv):
         params_table = {
@@ -1015,7 +1020,7 @@ class basic_bot:
         argv['shipping_query_id'] = shipping_query_id
         argv['ok'] = ok
         verify_params(params_table, argv)
-        return __post__(self, 'answerShippingQuery', argv)
+        return self.__post__('answerShippingQuery', argv)
 
     def answerPreCheckoutQuery(self, pre_checkout_query_id, ok, **argv):
         params_table = {
@@ -1026,7 +1031,7 @@ class basic_bot:
         argv['pre_checkout_query_id'] = pre_checkout_query_id
         argv['ok'] = ok
         verify_params(params_table, argv)
-        return __post__(self, 'answerPreCheckoutQuery', argv)
+        return self.__post__('answerPreCheckoutQuery', argv)
 
     def setPassportDataErrors(self, user_id, errors, **argv):
         params_table = {
@@ -1036,7 +1041,7 @@ class basic_bot:
         argv['user_id'] = user_id
         argv['errors'] = errors
         verify_params(params_table, argv)
-        return __post__(self, 'setPassportDataErrors', argv)
+        return self.__post__('setPassportDataErrors', argv)
 
     def sendGame(self, chat_id, game_short_name, **argv):
         params_table = {
@@ -1051,7 +1056,7 @@ class basic_bot:
         argv['chat_id'] = chat_id
         argv['game_short_name'] = game_short_name
         verify_params(params_table, argv)
-        return Message(__post__(self, 'sendGame', argv))
+        return Message(self.__post__('sendGame', argv))
 
     def setGameScore(self, user_id, score, **argv):
         params_table = {
@@ -1066,7 +1071,7 @@ class basic_bot:
         argv['user_id'] = user_id
         argv['score'] = score
         verify_params(params_table, argv)
-        return Message(__post__(self, 'setGameScore', argv))
+        return Message(self.__post__('setGameScore', argv))
 
     def getGameHighScores(self, user_id, **argv):
         params_table = {
@@ -1077,4 +1082,4 @@ class basic_bot:
         }
         argv['user_id'] = user_id
         verify_params(params_table, argv)
-        return [GameHighScore(x) for x in __post__(self, 'getGameHighScores', argv)]
+        return [GameHighScore(x) for x in self.__post__('getGameHighScores', argv)]
