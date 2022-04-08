@@ -1,13 +1,14 @@
 import logging
 
-from tgbot.bits.controller import timer
+import tgbot.bits.decorators as decorators
+import tgbot.bits.controller as controller
+from tgbot.bits.strings import decorating
 
-__all__ = ['bot_debug', 'bot_logger', 'bot_namelist', 'bot_mainloop', 'set_logger', 'log_info', 'log_warn']
 
 bot_debug = True
 bot_logger = None
 bot_namelist = dict()
-bot_mainloop = timer(interval=0.5)
+bot_mainloop = controller.timer(interval=0.5)
 
 
 def set_logger(new_logger: logging.Logger):
@@ -15,22 +16,50 @@ def set_logger(new_logger: logging.Logger):
     bot_logger = new_logger
 
 
-def log_debug(message):
+def log_debug(message, obj=None):
+    if not bot_debug:
+        return
+    if obj is not None:
+        message = f"{repr(obj)} : {message}"
     if isinstance(bot_logger, logging.Logger):
         bot_logger.debug(message)
     else:
-        print(f"[Debug]{message}")
+        print(f"[Debug] {message}")
 
 
-def log_info(message):
+def log_info(message, obj=None):
+    if obj is not None:
+        message = f"{repr(obj)} : {message}"
     if isinstance(bot_logger, logging.Logger):
         bot_logger.info(message)
     else:
-        print(f"[Info]{message}")
+        print(f"[Info] {message}")
 
 
-def log_warn(message):
+def log_warn(message, obj=None):
+    if obj is not None:
+        message = f"{repr(obj)} : {message}"
     if isinstance(bot_logger, logging.Logger):
         bot_logger.warning(message)
     else:
-        print(f"[Warn]{message}")
+        print(f"{decorating('[Warn]', 33)} {message}")
+
+
+# redefine controller.py
+class event(controller.event):
+    @decorators.with_info(log_info, begin="raised")
+    def happen(self, message=None):
+        super(event, self).happen(message)
+
+
+# redefine decorator.py
+log_full = decorators.log_full(bot_logger, bot_debug)
+log_stack = decorators.log_stack(bot_logger, bot_debug)
+log_timer = decorators.log_timer(bot_logger, bot_debug)
+log_exceptions = decorators.log_exceptions(bot_logger)
+
+
+# redefine poster.py
+import tgbot.bits.poster as poster
+post = log_exceptions(poster.post)
+verify_params = log_exceptions(poster.verify_params)

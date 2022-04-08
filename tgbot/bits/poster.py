@@ -1,13 +1,9 @@
 import requests
 import json
 
-from tgbot.bits.decorators import *
-from tgbot.globe import *
 
-
-@log_exceptions(bot_logger)
-def post(url, command, params, proxy):
-    r = requests.get(url + command, params=params, proxies=proxy)
+def post(url, command="", params=None, proxy=None):
+    r = requests.post(url + command, params=params, proxies=proxy)
     if r.status_code != 200:
         raise Exception("404 not found")
 
@@ -18,8 +14,7 @@ def post(url, command, params, proxy):
     return r['result']
 
 
-@log_exceptions(bot_logger)
-def confirm_params(params_table, params):
+def verify_params(params_table, params):
     for x, y in params.items():
         if params_table[x] is None:
             raise Exception(f"Invalid param : '{x}'")

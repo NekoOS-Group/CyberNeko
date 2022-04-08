@@ -5,8 +5,17 @@ __all__ = ['event', 'timer']
 
 
 class event:
-    def __init__(self):
+    def __init__(self, owner, name=None):
+        if name is None:
+            self.name = hex(id(self))
+        else:
+            self.name = name
+
+        self.owner = owner
         self.handlers = list()
+
+    def __repr__(self):
+        return f"<event>{repr(self.owner)}.{self.name}"
 
     def hock(self, handler):
         self.handlers.append(handler)
@@ -20,7 +29,7 @@ class timer:
     def __init__(self, interval=0):
         self.on = False
         self.interval = interval
-        self.tick = event()
+        self.tick = event(self, 'tick')
         self.thread = None
 
     def run(self):
