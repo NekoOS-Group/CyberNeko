@@ -1,4 +1,3 @@
-from tgbot.bits.decorators import with_info
 from tgbot.tgtypes import *
 from tgbot.globe import *
 
@@ -8,7 +7,7 @@ def log_api(message, *args):
         params = ", ".join([f"{k}={v!r}" for k, v in args[-1].items()])
     else:
         params = ""
-    log_info(f"{repr(args[0])} calling API {decorating(args[1], 32)}({params})")
+    log_info(f"{repr(args[0])} calling API {decorating(args[1], 32, 0)}({params})")
 
 
 class basic_bot:

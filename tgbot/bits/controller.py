@@ -15,7 +15,7 @@ class event:
         self.handlers = list()
 
     def __repr__(self):
-        return f"<event>{repr(self.owner)}.{self.name}"
+        return f"event<{repr(self.owner)}.{self.name}>"
 
     def hock(self, handler):
         self.handlers.append(handler)
@@ -41,7 +41,7 @@ class timer:
             self.name = hex(id(self))
 
     def __repr__(self):
-        return f"<timer {self.id} : {self.name}>"
+        return f"timer<{self.name}#{self.id}>"
 
     def run(self):
         self.on = True

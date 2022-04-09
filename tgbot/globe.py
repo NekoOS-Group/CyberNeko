@@ -22,7 +22,7 @@ def log_debug(message, *args, **kwargs):
     if not bot_debug:
         return
     if obj is not None:
-        message = f"{repr(obj)} : {message}"
+        message = f"{repr(obj)} {message}"
     if isinstance(bot_logger, logging.Logger):
         bot_logger.debug(message)
     else:
@@ -35,7 +35,7 @@ def log_info(message, *args, **kwargs):
     else:
         obj = None
     if obj is not None:
-        message = f"{repr(obj)} : {message}"
+        message = f"{repr(obj)} {message}"
     if isinstance(bot_logger, logging.Logger):
         bot_logger.info(message)
     else:
@@ -48,28 +48,11 @@ def log_warn(message, *args, **kwargs):
     else:
         obj = None
     if obj is not None:
-        message = f"{repr(obj)} : {message}"
+        message = f"{repr(obj)} {message}"
     if isinstance(bot_logger, logging.Logger):
         bot_logger.warning(message)
     else:
         print(f"{decorating('[Warn]', 33)} {message}")
-
-
-# redefine controller.py
-class event(controller.event):
-    @decorators.with_info(log_info, begin="raised", report_params=True)
-    def happen(self, message=None):
-        super(event, self).happen(message)
-
-
-class timer(controller.timer):
-    @decorators.with_info(log_info, begin="start", report_params=True)
-    def run(self):
-        super(timer, self).run()
-
-    @decorators.with_info(log_info, end="stop", report_params=True)
-    def stop(self):
-        super(timer, self).stop()
 
 
 # redefine decorator.py
@@ -77,6 +60,24 @@ log_full = decorators.log_full(bot_logger, bot_debug)
 log_stack = decorators.log_stack(bot_logger, bot_debug)
 log_timer = decorators.log_timer(bot_logger, bot_debug)
 log_exceptions = decorators.log_exceptions(bot_logger)
+with_info = decorators.with_info
+
+
+# redefine controller.py
+class event(controller.event):
+    @with_info(log_info, begin="raised", end="handled", report_params=True)
+    def happen(self, message=None):
+        super(event, self).happen(message)
+
+
+class timer(controller.timer):
+    @with_info(log_info, begin="start", report_params=True)
+    def run(self):
+        super(timer, self).run()
+
+    @with_info(log_info, end="interrupt", report_params=True)
+    def stop(self):
+        super(timer, self).stop()
 
 
 # redefine poster.py

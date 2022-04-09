@@ -264,79 +264,85 @@ class MaskPosition(tgtype): pass
 class InlineQuery(tgtype): pass
 
 
-class InlineQueryResultArticle(tgtype): pass
+class InlineQueryResult(tgtype): pass
 
 
-class InlineQueryResultPhoto(tgtype): pass
+class InlineQueryResultArticle(InlineQueryResult): pass
 
 
-class InlineQueryResultGif(tgtype): pass
+class InlineQueryResultPhoto(InlineQueryResult): pass
 
 
-class InlineQueryResultMpeg4Gif(tgtype): pass
+class InlineQueryResultGif(InlineQueryResult): pass
 
 
-class InlineQueryResultVideo(tgtype): pass
+class InlineQueryResultMpeg4Gif(InlineQueryResult): pass
 
 
-class InlineQueryResultAudio(tgtype): pass
+class InlineQueryResultVideo(InlineQueryResult): pass
 
 
-class InlineQueryResultVoice(tgtype): pass
+class InlineQueryResultAudio(InlineQueryResult): pass
 
 
-class InlineQueryResultDocument(tgtype): pass
+class InlineQueryResultVoice(InlineQueryResult): pass
 
 
-class InlineQueryResultLocation(tgtype): pass
+class InlineQueryResultDocument(InlineQueryResult): pass
 
 
-class InlineQueryResultVenue(tgtype): pass
+class InlineQueryResultLocation(InlineQueryResult): pass
 
 
-class InlineQueryResultContact(tgtype): pass
+class InlineQueryResultVenue(InlineQueryResult): pass
 
 
-class InlineQueryResultGame(tgtype): pass
+class InlineQueryResultContact(InlineQueryResult): pass
 
 
-class InlineQueryResultCachedPhoto(tgtype): pass
+class InlineQueryResultGame(InlineQueryResult): pass
 
 
-class InlineQueryResultCachedGif(tgtype): pass
+class InlineQueryResultCachedPhoto(InlineQueryResult): pass
 
 
-class InlineQueryResultCachedMpeg4Gif(tgtype): pass
+class InlineQueryResultCachedGif(InlineQueryResult): pass
 
 
-class InlineQueryResultCachedSticker(tgtype): pass
+class InlineQueryResultCachedMpeg4Gif(InlineQueryResult): pass
 
 
-class InlineQueryResultCachedDocument(tgtype): pass
+class InlineQueryResultCachedSticker(InlineQueryResult): pass
 
 
-class InlineQueryResultCachedVideo(tgtype): pass
+class InlineQueryResultCachedDocument(InlineQueryResult): pass
 
 
-class InlineQueryResultCachedVoice(tgtype): pass
+class InlineQueryResultCachedVideo(InlineQueryResult): pass
 
 
-class InlineQueryResultCachedAudio(tgtype): pass
+class InlineQueryResultCachedVoice(InlineQueryResult): pass
 
 
-class InputTextMessageContent(tgtype): pass
+class InlineQueryResultCachedAudio(InlineQueryResult): pass
 
 
-class InputLocationMessageContent(tgtype): pass
+class InputMessageContent(tgtype): pass
 
 
-class InputVenueMessageContent(tgtype): pass
+class InputTextMessageContent(InputMessageContent): pass
 
 
-class InputContactMessageContent(tgtype): pass
+class InputLocationMessageContent(InputMessageContent): pass
 
 
-class InputInvoiceMessageContent(tgtype): pass
+class InputVenueMessageContent(InputMessageContent): pass
+
+
+class InputContactMessageContent(InputMessageContent): pass
+
+
+class InputInvoiceMessageContent(InputMessageContent): pass
 
 
 class ChosenInlineResult(tgtype): pass
@@ -378,31 +384,34 @@ class EncryptedPassportElement(tgtype): pass
 class EncryptedCredentials(tgtype): pass
 
 
-class PassportElementErrorDataField(tgtype): pass
+class PassportElementError(tgtype): pass
 
 
-class PassportElementErrorFrontSide(tgtype): pass
+class PassportElementErrorDataField(PassportElementError): pass
 
 
-class PassportElementErrorReverseSide(tgtype): pass
+class PassportElementErrorFrontSide(PassportElementError): pass
 
 
-class PassportElementErrorSelfie(tgtype): pass
+class PassportElementErrorReverseSide(PassportElementError): pass
 
 
-class PassportElementErrorFile(tgtype): pass
+class PassportElementErrorSelfie(PassportElementError): pass
 
 
-class PassportElementErrorFiles(tgtype): pass
+class PassportElementErrorFile(PassportElementError): pass
 
 
-class PassportElementErrorTranslationFile(tgtype): pass
+class PassportElementErrorFiles(PassportElementError): pass
 
 
-class PassportElementErrorTranslationFiles(tgtype): pass
+class PassportElementErrorTranslationFile(PassportElementError): pass
 
 
-class PassportElementErrorUnspecified(tgtype): pass
+class PassportElementErrorTranslationFiles(PassportElementError): pass
+
+
+class PassportElementErrorUnspecified(PassportElementError): pass
 
 
 class Game(tgtype): pass
@@ -421,9 +430,6 @@ class CallbackGame(tgtype): pass
 
 
 class InputFile(tgtype): pass
-
-
-class InputMessageContent(tgtype): pass
 
 
 Update.__type_table__ = {

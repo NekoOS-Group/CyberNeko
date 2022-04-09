@@ -12,6 +12,8 @@ class bot(basic_bot):
         super(bot, self).__init__(token, proxy, name)
         self.received_message = event(self, name='received_message')
         self.send_message_succeed = event(self, name='send_message_succeed')
+        self.initialized = event(self, name='initialized')
+        self.initialized.happen()
 
     def sendMessage(self, chat_id, text, **argv):
         message = super(bot, self).sendMessage(chat_id, text, **argv)

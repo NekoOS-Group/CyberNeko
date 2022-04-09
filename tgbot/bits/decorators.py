@@ -140,3 +140,13 @@ def handle(*events: event):
         return wrapper
 
     return decorator
+
+
+def return_type(_type):
+    def wrapper(f):
+        def new_f(*args, **kwargs) -> _type:
+            return _type(f(*args, **kwargs))
+
+        return new_f
+
+    return wrapper
