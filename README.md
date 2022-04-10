@@ -1,4 +1,4 @@
-# CyberNeko
+# <div align="center">CyberNeko<div>
 <p align="center">design your own telegram bot from zero</p>
 
 ## Content
