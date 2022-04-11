@@ -1,9 +1,9 @@
-from tgbot.globe import *
-from tgbot.tgapi import basic_bot
-from tgbot.tgtypes import *
+from teleneko.globe import *
+from teleneko.tgapi import basic_bot
+from teleneko.tgtypes import *
 
-from tgbot.bits.decorators import *
-from tgbot.globe import event
+from teleneko.bits.decorators import *
+from teleneko.globe import event
 
 
 class bot(basic_bot):

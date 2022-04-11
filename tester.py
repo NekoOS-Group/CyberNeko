@@ -1,4 +1,4 @@
-from tgbot import bot
+from teleneko import bot
 
 # proxy, name are optional
 s = bot(open('mytoken.txt', "r").read().strip(), proxy="localhost:7890", name="Neko")

@@ -129,3 +129,6 @@ dmypy.json
 .pyre/
 /mytoken.txt
 /__tmp__/api.html
+/__tmp__/classdefine.txt
+/__tmp__/classes.txt
+/__tmp__/functions.txt

@@ -1,8 +1,8 @@
 import logging
 
-import tgbot.bits.decorators as decorators
-import tgbot.bits.controller as controller
-from tgbot.bits.strings import decorating
+import teleneko.bits.decorators as decorators
+import teleneko.bits.controller as controller
+from teleneko.bits.strings import decorating
 
 bot_debug = True
 bot_logger = None
@@ -39,7 +39,7 @@ def log_info(message, *args, **kwargs):
     if isinstance(bot_logger, logging.Logger):
         bot_logger.info(message)
     else:
-        print(f"[Info] {message}")
+        print(f"{decorating('[Info]', 34)} {message}")
 
 
 def log_warn(message, *args, **kwargs):
@@ -61,9 +61,10 @@ log_stack = decorators.log_stack(bot_logger, bot_debug)
 log_timer = decorators.log_timer(bot_logger, bot_debug)
 log_exceptions = decorators.log_exceptions(bot_logger)
 with_info = decorators.with_info
+with_return = decorators.with_return
 
 
-# redefine controller.py
+# decorate classes from controller.py
 class event(controller.event):
     @with_info(log_info, begin="raised", end="handled", report_params=True)
     def happen(self, message=None):
@@ -80,8 +81,8 @@ class timer(controller.timer):
         super(timer, self).stop()
 
 
-# redefine poster.py
-import tgbot.bits.poster as poster
+# decorate functions from poster.py
+import teleneko.bits.poster as poster
 post = log_exceptions(poster.post)
 verify_params = log_exceptions(poster.verify_params)
 

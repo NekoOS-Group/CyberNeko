@@ -1,5 +1,7 @@
 import functools
 import time
+import typing
+from typing import Union, List, Tuple
 
 from .strings import decorating, str_type
 
@@ -39,7 +41,7 @@ def bread(begin=None, end=None, exp=None):
     return decorator
 
 
-def log_enter(logger=None, logArgs=False, debug=False):
+def log_enter(logger=None, logArgs: bool = False, debug: bool = False):
     def log_debug(f, *args, **kwargs):
         if logArgs:
             arg = "(" + ", ".join([repr(x) for x in args] + [f"{k}={v!r}" for k, v in kwargs.items()]) + ")"
@@ -56,7 +58,7 @@ def log_enter(logger=None, logArgs=False, debug=False):
         return log_debug
 
 
-def log_exit(logger=None, logRets=False, debug=False):
+def log_exit(logger=None, logRets: bool = False, debug: bool = False):
     def log_debug(f, *args, **kwargs):
         if logRets:
             ret = " returned " + repr(kwargs['message_by_function'])
@@ -73,15 +75,15 @@ def log_exit(logger=None, logRets=False, debug=False):
         return log_debug
 
 
-def log_full(logger=None, debug=False):
+def log_full(logger=None, debug: bool = False):
     return bread(log_enter(logger, True, debug=debug), log_exit(logger, True, debug=debug))
 
 
-def log_stack(logger=None, debug=False):
+def log_stack(logger=None, debug: bool = False):
     return bread(log_enter(logger, debug=debug), log_exit(logger, debug=debug))
 
 
-def log_timer(logger=None, debug=False):
+def log_timer(logger=None, debug: bool = False):
     def begin(*args, **kwargs):
         return time.perf_counter()
 
@@ -107,7 +109,7 @@ def log_exceptions(logger=None):
     return bread(exp=log_error)
 
 
-def with_info(handler, begin=None, end=None, report_params=False):
+def with_info(handler, begin=None, end=None, report_params: bool = False):
     def info_begin(f, *args, **kwargs):
         if begin is not None:
             if report_params:
@@ -142,10 +144,14 @@ def handle(*events: event):
     return decorator
 
 
-def return_type(_type):
+def with_return(_type: Union[type, List[typing.Any], Tuple[typing.Any]]):
     def wrapper(f):
         def new_f(*args, **kwargs) -> _type:
-            return _type(f(*args, **kwargs))
+            ret = f(*args, **kwargs)
+            if type(ret) == _type:
+                return ret
+            else:
+                return _type(ret)
 
         return new_f
 

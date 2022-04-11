@@ -1,5 +1,5 @@
-from tgbot.bits.strings import *
-from tgbot.globe import log_warn
+from teleneko.bits.strings import *
+from teleneko.globe import log_warn
 
 
 class tgtype:

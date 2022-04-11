@@ -1,5 +1,5 @@
-from tgbot.tgtypes import *
-from tgbot.globe import *
+from teleneko.tgtypes import *
+from teleneko.globe import *
 
 
 def log_api(message, *args):
@@ -55,8 +55,9 @@ class basic_bot:
         return f"https://api.telegram.org/bot{self.__token__}/"
 
     # API functions
+    @with_return(User)
     def getMe(self):
-        return User(self.__post__('getMe'))
+        return self.__post__('getMe')
 
     def getUpdates(self, **argv):
         params_table = {

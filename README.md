@@ -1,5 +1,5 @@
 # <div align="center">CyberNeko<div>
-<p align="center">design your own telegram bot from zero</p>
+<p align="center">design your own online bot from zero</p>
 
 ## Content
 
