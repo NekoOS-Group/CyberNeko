@@ -2,7 +2,7 @@ import requests
 import json
 
 
-def post(url, command="", params=None, proxy=None):
+def post(url: str, command: str = "", params=None, proxy=None):
     r = requests.post(url + command, params=params, proxies=proxy)
     if r.status_code != 200:
         raise Exception("404 not found")

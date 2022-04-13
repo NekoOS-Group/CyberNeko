@@ -1,5 +1,5 @@
 from teleneko.bits.strings import *
-from teleneko.globe import log_warn
+from teleneko.globe import *
 
 
 class tgtype:
