@@ -4,40 +4,34 @@ from typing import Union
 
 
 def decorating(x: str, command: Union[int, str] = 30, default: Union[int, str] = 37):
-    """
-    Make string colorful
+    """Make string colorful
 
     Args:
-        x: the string you want to decorate
+        x: the string to be decorated
         command: CSI command at the beginning
         default: CSI command at the end
 
-    Returns: decorated string
-
-    Examples:
-        >>> decorating('qwq', 30, 37)
-        qwq
-       ^   ^
-\033[30m   \033[37m
+    Returns:
+         decorated string
     """
     return f"\033[{str(command)}m{x}\033[{str(default)}m"
 
 
 def transfer(x):
-    """
-    replace special character to escape character
+    """replace special character to escape character
 
     Args:
         x: the input string
 
-    Returns: translated string
+    Returns:
+        translated string
 
     Examples:
         >>> print('1\\n1')
         1
         1
-        >>> print(transfer('1\\n1'))
-        1\n1
+        >>> transfer('1\\n1')
+        1\\n1
     """
     x = x.replace('\n', decorating('\\n', 31, 33))
     x = x.replace('\r', decorating('\\r', 31, 33))
@@ -47,31 +41,23 @@ def transfer(x):
 
 
 def str_type(x):
-    """
-    detect the type of x and return a printable string
+    """detect the type of x and return a printable string
 
     Args:
         x: input data
 
-    Returns: type of x
-
-    Examples:
-        >>> str_type(123)
-        int
-        >>> str_type([])
-        list
-        >>> str_type(dict())
-        dict<at 0xfffffffff>
+    Returns:
+        string of type of x
     """
     s = str(type(x)).split("'")[1]
-    if s == 'list':
-        s = decorating("list[%d]" % len(x), 34)
-    elif s in ['int', 'float', 'bool']:
-        s = decorating(s, 36)
-    elif s == 'str':
-        s = decorating(s, 33)
+    if x is list:
+        return decorating("list[%d]" % len(x), 34)
+    elif x in [int, float, bool]:
+        return decorating(s, 36)
+    elif x is str:
+        return decorating(s, 33)
     elif isinstance(x, BaseException):
-        s = s
+        return s
     else:
         s = s.split('.')[-1]
         s = decorating("%s<at %s>" % (s, hex(id(x))), '30;47')
@@ -80,11 +66,15 @@ def str_type(x):
 
 def str_val(x):
     """
-    call __str__, and highlight string type
+    If x is a string, then return string 'x' with color 33.
+
+    Others return x.__str__()
+
     Args:
         x: input object
 
-    Returns: its __str__()
+    Returns:
+        string format of x
 
     """
     s = str(x)

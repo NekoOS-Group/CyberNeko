@@ -36,9 +36,14 @@ class basic_bot:
     def __repr__(self):
         return f"bot<{self.__name__}>"
 
+    @log_timer
     @with_info(log_api, begin='', report_params=True)
+    @log_exceptions
     def __post__(self, command, params=None):
-        return post(self.url, command, params, self.proxy)
+        r = post(self.url + command, params, self.proxy)
+        if not r['ok']:
+            raise Exception('Bad Requests')
+        return r['result']
 
     # properties
 

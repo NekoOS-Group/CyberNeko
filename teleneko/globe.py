@@ -14,15 +14,20 @@ def set_logger(new_logger: logging.Logger):
     bot_logger = new_logger
 
 
-def log_debug(message, *args, **kwargs):
+def message_with_object(message, *args):
     if len(args) > 0:
         obj = args[0]
     else:
         obj = None
-    if not bot_debug:
-        return
     if obj is not None:
         message = f"{repr(obj)} {message}"
+    return message
+
+
+def log_debug(message, *args, **kwargs):
+    if not bot_debug:
+        return
+    message = message_with_object(message, *args)
     if isinstance(bot_logger, logging.Logger):
         bot_logger.debug(message)
     else:
@@ -30,12 +35,7 @@ def log_debug(message, *args, **kwargs):
 
 
 def log_info(message, *args, **kwargs):
-    if len(args) > 0:
-        obj = args[0]
-    else:
-        obj = None
-    if obj is not None:
-        message = f"{repr(obj)} {message}"
+    message = message_with_object(message, *args)
     if isinstance(bot_logger, logging.Logger):
         bot_logger.info(message)
     else:
@@ -43,23 +43,26 @@ def log_info(message, *args, **kwargs):
 
 
 def log_warn(message, *args, **kwargs):
-    if len(args) > 0:
-        obj = args[0]
-    else:
-        obj = None
-    if obj is not None:
-        message = f"{repr(obj)} {message}"
+    message = message_with_object(message, *args)
     if isinstance(bot_logger, logging.Logger):
         bot_logger.warning(message)
     else:
         print(f"{decorating('[Warn]', 33)} {message}")
 
 
+def log_error(message, *args, **kwargs):
+    message = message_with_object(message, *args)
+    if isinstance(bot_logger, logging.Logger):
+        bot_logger.warning(message)
+    else:
+        print(f"{decorating('[Error]', 31)} {message}")
+
+
 # redefine decorator.py
-log_full = decorators.log_full(bot_logger, bot_debug)
-log_stack = decorators.log_stack(bot_logger, bot_debug)
-log_timer = decorators.log_timer(bot_logger, bot_debug)
-log_exceptions = decorators.log_exceptions(bot_logger)
+log_full = decorators.log_full(log_debug)
+log_stack = decorators.log_stack(log_debug)
+log_timer = decorators.log_timer(log_debug)
+log_exceptions = decorators.log_exceptions(log_error)
 with_info = decorators.with_info
 with_return = decorators.with_return
 

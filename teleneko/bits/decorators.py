@@ -41,7 +41,7 @@ def bread(begin=None, end=None, exp=None):
     return decorator
 
 
-def log_enter(logger=None, logArgs: bool = False, debug: bool = False):
+def log_enter(handler, logArgs: bool = False):
     def log_debug(f, *args, **kwargs):
         if logArgs:
             arg = "(" + ", ".join([repr(x) for x in args] + [f"{k}={v!r}" for k, v in kwargs.items()]) + ")"
@@ -49,16 +49,12 @@ def log_enter(logger=None, logArgs: bool = False, debug: bool = False):
         else:
             message = f"+ {decorating(f.__name__, 32)}"
 
-        if logger is not None:
-            logger.debug(message)
-        else:
-            print(message)
+        handler(message)
 
-    if debug:
-        return log_debug
+    return log_debug
 
 
-def log_exit(logger=None, logRets: bool = False, debug: bool = False):
+def log_exit(handler, logRets: bool = False):
     def log_debug(f, *args, **kwargs):
         if logRets:
             ret = " returned " + repr(kwargs['message_by_function'])
@@ -66,45 +62,34 @@ def log_exit(logger=None, logRets: bool = False, debug: bool = False):
         else:
             message = f"- {decorating(f.__name__, 31)}"
 
-        if logger is not None:
-            logger.debug(message)
-        else:
-            print(message)
+        handler(message)
 
-    if debug:
-        return log_debug
+    return log_debug
 
 
-def log_full(logger=None, debug: bool = False):
-    return bread(log_enter(logger, True, debug=debug), log_exit(logger, True, debug=debug))
+def log_full(handler):
+    return bread(log_enter(handler, True), log_exit(handler, True))
 
 
-def log_stack(logger=None, debug: bool = False):
-    return bread(log_enter(logger, debug=debug), log_exit(logger, debug=debug))
+def log_stack(handler):
+    return bread(log_enter(handler), log_exit(handler))
 
 
-def log_timer(logger=None, debug: bool = False):
+def log_timer(handler):
     def begin(*args, **kwargs):
         return time.perf_counter()
 
     def end(*args, **kwargs):
-        if logger is not None:
-            logger.debug(f"for {decorating(time.perf_counter() - kwargs['message_by_begin'], 32)}s")
-        else:
-            print(f"for {decorating(time.perf_counter() - kwargs['message_by_begin'], 32)}s")
+        message = f"for {decorating(time.perf_counter() - kwargs['message_by_begin'], 32)}s"
+        handler(message)
 
-    if debug:
-        return bread(begin, end)
-    else:
-        return bread()
+    return bread(begin, end)
 
 
-def log_exceptions(logger=None):
+def log_exceptions(handler):
     def log_error(e):
-        if logger is not None:
-            logger.error(decorating(f"{str_type(e)} : {e}", 31))
-        else:
-            print(decorating(f"{str_type(e)} : {e}", 31))
+        message = decorating(f"{str_type(e)} : {e}", 31)
+        handler(message)
 
     return bread(exp=log_error)
 
@@ -146,6 +131,7 @@ def handle(*events: event):
 
 def with_return(_type: Union[type, List[typing.Any], Tuple[typing.Any]]):
     def wrapper(f):
+        @functools.wraps(f)
         def new_f(*args, **kwargs) -> _type:
             ret = f(*args, **kwargs)
             if type(ret) == _type:
