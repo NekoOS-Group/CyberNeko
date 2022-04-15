@@ -1,10 +1,16 @@
 from teleneko import bot
 
 # proxy, name are optional
-s = bot(open('mytoken.txt', "r").read().strip(), proxy="localhost:7890", name="Neko")
+#s = bot(open('mytoken.txt', "r").read().strip(), proxy="localhost:7890", name="Neko")
 
-_id = s.getUpdates(offset=-1)[0].message.message_id + 1
+#_id = s.getUpdates(offset=-1)[0].message.message_id + 1
 
+
+from teleneko.tgtypes import User
+
+s = User({'id': 1, 'qwq': 2})
+print(s)
+exit()
 
 while True:
     x = s.getUpdates(limit=100, offset=_id)

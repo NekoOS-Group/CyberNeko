@@ -11,18 +11,18 @@ class event:
         else:
             self.name = name
 
-        self.owner = owner
+        self.sender = owner
         self.handlers = list()
 
     def __repr__(self):
-        return f"event<{repr(self.owner)}.{self.name}>"
+        return f"event<{repr(self.sender)}.{self.name}>"
 
     def hock(self, handler):
         self.handlers.append(handler)
 
     def happen(self, message=None):
         for h in self.handlers:
-            h(message)
+            h(self.sender, message)
 
 
 class timer:

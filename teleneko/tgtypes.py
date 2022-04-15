@@ -1,5 +1,5 @@
 from teleneko.bits.strings import *
-from teleneko.globe import *
+from teleneko.globe import log_warn
 
 
 class tgtype:
@@ -11,22 +11,22 @@ class tgtype:
         for name, val in json_info.items():
 
             try:
-                typeVal = self.__type_table__[name]
+                expectType = self.__type_table__[name]
             except KeyError:
-                log_warn(f"Unprocessed param {name}")
+                log_warn(f"received unexpected param '{name}'", self)
                 continue
 
-            if type(typeVal) != list:
-                self.__dict__[name] = typeVal(val)
+            if type(expectType) != list:
+                self.__dict__[name] = expectType(val)
                 continue
 
-            if len(typeVal) == 1:
-                self.__dict__[name] = [typeVal[0](v) for v in val]
+            if len(expectType) == 1:
+                self.__dict__[name] = [expectType[0](v) for v in val]
                 continue
 
-            for t in typeVal:
-                if isinstance(val, t):
-                    self.__dict__[name] = t(val)
+            for e in expectType:
+                if isinstance(val, e):
+                    self.__dict__[name] = e(val)
                     break
 
     def __tree__(self, offset=""):
@@ -52,6 +52,9 @@ class tgtype:
 
     def __str__(self):
         return decorating(str_type(self) + "\n" + self.__tree__(), 37, 0)
+
+    def __repr__(self):
+        return f"type<{str_type(self, True)} at {hex(id(self))}>"
 
 
 class Update(tgtype): pass

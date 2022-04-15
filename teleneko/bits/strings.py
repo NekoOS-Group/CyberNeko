@@ -40,16 +40,18 @@ def transfer(x):
     return x
 
 
-def str_type(x):
+def str_type(x, origin: bool = False):
     """detect the type of x and return a printable string
 
     Args:
         x: input data
+        origin: not colored
 
     Returns:
         string of type of x
     """
-    s = str(type(x)).split("'")[1]
+    x = type(x)
+    s = str(x).split("'")[1]
     if x is list:
         return decorating("list[%d]" % len(x), 34)
     elif x in [int, float, bool]:
@@ -60,7 +62,8 @@ def str_type(x):
         return s
     else:
         s = s.split('.')[-1]
-        s = decorating("%s<at %s>" % (s, hex(id(x))), '30;47')
+        if not origin:
+            s = decorating("%s<at %s>" % (s, hex(id(x))), '30;47', '0;37')
     return s
 
 

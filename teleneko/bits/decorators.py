@@ -1,7 +1,5 @@
 import functools
 import time
-import typing
-from typing import Union, List, Tuple
 
 from .strings import decorating, str_type
 
@@ -129,16 +127,16 @@ def handle(*events: event):
     return decorator
 
 
-def with_return(_type: Union[type, List[typing.Any], Tuple[typing.Any]]):
-    def wrapper(f):
+def with_return(_type: type or list or tuple or dict):
+    def decorator(f):
         @functools.wraps(f)
-        def new_f(*args, **kwargs) -> _type:
+        def wrapper(*args, **kwargs) -> _type:
             ret = f(*args, **kwargs)
-            if type(ret) == _type:
+            if isinstance(ret, _type):
                 return ret
             else:
                 return _type(ret)
 
-        return new_f
+        return wrapper
 
-    return wrapper
+    return decorator
