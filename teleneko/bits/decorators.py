@@ -116,7 +116,7 @@ from .controller import event
 def handle(*events: event):
     def decorator(f):
         for e in events:
-            e.hock(f)
+            e.hook(f)
 
         @functools.wraps(f)
         def wrapper(*args, **kwargs):

@@ -17,12 +17,15 @@ class event:
     def __repr__(self):
         return f"event<{repr(self.sender)}.{self.name}>"
 
-    def hock(self, handler):
+    def hook(self, handler):
         self.handlers.append(handler)
 
     def happen(self, message=None):
         for h in self.handlers:
-            h(self.sender, message)
+            if message is None:
+                h(self.sender)
+            else:
+                h(self.sender, message)
 
 
 class timer:
