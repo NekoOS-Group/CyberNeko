@@ -11,33 +11,33 @@ class event:
         else:
             self.name = name
 
-        self.sender = owner
-        self.handlers = list()
+        self.__sender = owner
+        self.__handlers = list()
 
     def __repr__(self):
-        return f"event<{repr(self.sender)}.{self.name}>"
+        return f"event<{repr(self.__sender)}.{self.name}>"
 
     def hook(self, handler):
-        self.handlers.append(handler)
+        self.__handlers.append(handler)
 
     def happen(self, message=None):
-        for h in self.handlers:
+        for h in self.__handlers:
             if message is None:
-                h(self.sender)
+                h(self.__sender)
             else:
-                h(self.sender, message)
+                h(self.__sender, message)
 
 
 class timer:
-    __id__ = 0
+    __id = 0
 
     def __init__(self, name=None, interval=0):
         self.on = False
         self.interval = interval
         self.tick = event(self, 'tick')
-        self.thread = None
-        timer.__id__ += 1
-        self.id = timer.__id__
+        self.__thread = None
+        timer.__id += 1
+        self.id = timer.__id
         if name is not None:
             self.name = name
         else:
@@ -48,13 +48,13 @@ class timer:
 
     def run(self):
         self.on = True
-        self.thread = threading.Thread(target=self.__tick__)
-        self.thread.start()
+        self.__thread = threading.Thread(target=self.__tick)
+        self.__thread.start()
 
     def stop(self):
         self.on = False
 
-    def __tick__(self):
+    def __tick(self):
         while self.on:
             time.sleep(self.interval)
             self.tick.happen()

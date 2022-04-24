@@ -4,17 +4,8 @@ import teleneko.bits.decorators as decorators
 import teleneko.bits.controller as controller
 from teleneko.bits.strings import decorating
 
-bot_debug = True
-bot_logger = None
-bot_namelist = dict()
 
-
-def set_logger(new_logger: logging.Logger):
-    global bot_logger
-    bot_logger = new_logger
-
-
-def message_with_object(message, *args):
+def __message_with_object(message, *args):
     if len(args) > 0:
         obj = args[0]
     else:
@@ -27,7 +18,7 @@ def message_with_object(message, *args):
 def log_debug(message, *args, **kwargs):
     if not bot_debug:
         return
-    message = message_with_object(message, *args)
+    message = __message_with_object(message, *args)
     if isinstance(bot_logger, logging.Logger):
         bot_logger.debug(message)
     else:
@@ -35,7 +26,7 @@ def log_debug(message, *args, **kwargs):
 
 
 def log_info(message, *args, **kwargs):
-    message = message_with_object(message, *args)
+    message = __message_with_object(message, *args)
     if isinstance(bot_logger, logging.Logger):
         bot_logger.info(message)
     else:
@@ -43,7 +34,7 @@ def log_info(message, *args, **kwargs):
 
 
 def log_warn(message, *args, **kwargs):
-    message = message_with_object(message, *args)
+    message = __message_with_object(message, *args)
     if isinstance(bot_logger, logging.Logger):
         bot_logger.warning(message)
     else:
@@ -51,7 +42,7 @@ def log_warn(message, *args, **kwargs):
 
 
 def log_error(message, *args, **kwargs):
-    message = message_with_object(message, *args)
+    message = __message_with_object(message, *args)
     if isinstance(bot_logger, logging.Logger):
         bot_logger.warning(message)
     else:
@@ -86,7 +77,35 @@ class timer(controller.timer):
 
 # decorate functions from poster.py
 import teleneko.bits.poster as poster
+
 post = log_exceptions(poster.post)
 verify_params = log_exceptions(poster.verify_params)
 
+
+# global variables
+bot_debug = True
+bot_logger = None
+bot_namelist = dict()
 bot_mainloop = timer(interval=0.5, name='mainloop')
+
+
+# global methods
+def set_logger(new_logger: logging.Logger):
+    global bot_logger
+    bot_logger = new_logger
+
+
+def set_debug(is_debug: bool):
+    global bot_debug
+    bot_debug = is_debug
+
+
+def find_bot_by_name(name: str):
+    return bot_namelist.get(name)
+
+
+def terminal():
+    bot_mainloop.stop()
+    for name, bot in bot_namelist:
+        bot.shutdown()
+    bot_namelist.clear()
