@@ -3,7 +3,7 @@ import time
 
 from .strings import decorating, str_type
 
-__all__ = ['log_full', 'log_stack', 'log_timer', 'log_exceptions', 'with_info', 'handle']
+__all__ = ['log_full', 'log_stack', 'log_timer', 'log_exceptions', 'with_info']
 
 
 # bread is very delicious
@@ -108,23 +108,6 @@ def with_info(handler, begin=None, end=None, report_params: bool = False):
                 handler(end)
 
     return bread(info_begin, info_end)
-
-
-from .controller import event
-
-
-def handle(*events: event):
-    def decorator(f):
-        for e in events:
-            e.hook(f)
-
-        @functools.wraps(f)
-        def wrapper(*args, **kwargs):
-            return f(*args, **kwargs)
-
-        return wrapper
-
-    return decorator
 
 
 def with_return(_type: type or list or tuple or dict):

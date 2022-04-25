@@ -12,7 +12,7 @@ def log_api(message, *args):
 
 class basic_bot:
     @log_exceptions
-    def __init__(self, token, proxy="", name=None):
+    def __init__(self, token, proxy="", name: str = None):
         self.__token = token
         self.__proxy = {'https': proxy, 'http': proxy}
         self.__name = name
@@ -28,7 +28,7 @@ class basic_bot:
         try:
             self.me = self.getMe()
         except Exception:
-            raise Exception("Can't connect telegram service or wrong token.")
+            raise Exception("Can't connect telegram service or token is invalid.")
 
     def __str__(self):
         return str(self.me)

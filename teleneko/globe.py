@@ -75,18 +75,20 @@ class timer(controller.timer):
         super(timer, self).stop()
 
 
+handle = controller.handle
+
+
 # decorate functions from poster.py
 import teleneko.bits.poster as poster
 
 post = log_exceptions(poster.post)
 verify_params = log_exceptions(poster.verify_params)
 
-
 # global variables
 bot_debug = True
 bot_logger = None
 bot_namelist = dict()
-bot_mainloop = timer(interval=0.5, name='mainloop')
+bot_mainloop = timer(interval=0, name='mainloop')
 
 
 # global methods
