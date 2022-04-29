@@ -69,7 +69,26 @@ class User(tgtype): pass
 class Chat(tgtype): pass
 
 
-class Message(tgtype): pass
+class Message(tgtype):
+    @staticmethod
+    def type_filter(message_type):
+        def returned_filter(message):
+            if type(message_type) is str:
+                message_type_copy = [message_type]
+            else:
+                message_type_copy = message_type
+
+            for item in message_type_copy:
+                if hasattr(message, item):
+                    return True
+
+            return False
+
+        return returned_filter
+
+    @staticmethod
+    def contain_command(command):
+        pass
 
 
 class MessageId(tgtype): pass

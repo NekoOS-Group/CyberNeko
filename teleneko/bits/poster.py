@@ -17,7 +17,11 @@ def post(url: str, params=None, proxy=None):
     Raises:
         Exception: 404 not found
     """
-    r = requests.post(url, params=params, proxies=proxy)
+    try:
+        r = requests.post(url, params=params, proxies=proxy)
+    except Exception:
+        raise Exception("Network Error")
+
     if r.status_code != 200:
         raise Exception("404 not found")
 

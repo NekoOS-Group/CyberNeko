@@ -50,13 +50,12 @@ def str_type(x, origin: bool = False):
     Returns:
         string of type of x
     """
-    x = type(x)
-    s = str(x).split("'")[1]
-    if x is list:
+    s = str(type(x)).split("'")[1]
+    if type(x) is list:
         return decorating("list[%d]" % len(x), 34)
-    elif x in [int, float, bool]:
+    elif type(x) in [int, float, bool]:
         return decorating(s, 36)
-    elif x is str:
+    elif type(x) is str:
         return decorating(s, 33)
     elif isinstance(x, BaseException):
         return s

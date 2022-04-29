@@ -6,7 +6,7 @@ setup(
     packages=['teleneko', 'teleneko.bits', 'teleneko.tests'],
     url='https://github.com/NekoOS-Group/CyberNeko',
     license='GPL-3.0 License',
-    author='bzy',
+    author='NekoOS-Group',
     author_email='bzy.mic@qq.com',
     description='first release'
 )

@@ -22,7 +22,7 @@ def log_debug(message, *args, **kwargs):
     if isinstance(bot_logger, logging.Logger):
         bot_logger.debug(message)
     else:
-        print(f"[Debug] {message}")
+        print(decorating(f"[Debug] {message}", 0, 0))
 
 
 def log_info(message, *args, **kwargs):
@@ -64,6 +64,10 @@ class event(controller.event):
     def happen(self, message=None):
         super(event, self).happen(message)
 
+    def call(self, f, message):
+        log_debug(f"recalling function<{f.__name__}>")
+        super(event, self).call(f, message)
+
 
 class timer(controller.timer):
     @with_info(log_info, begin="start", report_params=True)
@@ -75,7 +79,12 @@ class timer(controller.timer):
         super(timer, self).stop()
 
 
+def __log_filter_failed(obj, message):
+    log_debug("<event_filter> : skipped")
+
+
 handle = controller.handle
+event_filter = controller.event_filter(__log_filter_failed)
 
 
 # decorate functions from poster.py

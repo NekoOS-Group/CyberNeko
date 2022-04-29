@@ -2,12 +2,12 @@ from teleneko.tgtypes import *
 from teleneko.globe import *
 
 
-def log_api(message, *args):
+def _log_api(message, *args):
     if len(args) > 2:
         params = ", ".join([f"{k}={v!r}" for k, v in args[-1].items()])
     else:
         params = ""
-    log_info(f"{repr(args[0])} calling API {decorating(args[1], 32, 0)}({params})")
+    log_debug(f"{repr(args[0])} calling for API {decorating(args[1], 32, 0)}({params})")
 
 
 class basic_bot:
@@ -36,8 +36,7 @@ class basic_bot:
     def __repr__(self):
         return f"bot<{self.__name}>"
 
-    @log_timer
-    @with_info(log_api, begin='', report_params=True)
+    @with_info(_log_api, begin='', report_params=True)
     @log_exceptions
     def __post(self, command, params=None):
         r = post(self.url + command, params, self.proxy)

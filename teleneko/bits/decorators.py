@@ -20,9 +20,11 @@ def bread(begin=None, end=None, exp=None):
             try:
                 ret = f(*args, **kwargs)
             except Exception as e:
+                handled = False
                 if exp is not None:
-                    exp(e)
-                raise e
+                    handled = exp(e)
+                if not handled:
+                    raise e
 
             if end is not None:
                 if message is not None:

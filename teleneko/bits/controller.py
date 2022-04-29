@@ -2,7 +2,7 @@ import functools
 import threading
 import time
 
-__all__ = ['event', 'timer']
+__all__ = ['event', 'timer', 'handle', 'event_filter']
 
 
 class event:
@@ -12,21 +12,24 @@ class event:
         else:
             self._name = name
 
-        self.__sender = owner
-        self.__handlers = list()
+        self._sender = owner
+        self._handlers = list()
 
     def __repr__(self):
-        return f"event<{repr(self.__sender)}.{self._name}>"
+        return f"event<{repr(self._sender)}.{self._name}>"
 
     def hook(self, handler):
-        self.__handlers.append(handler)
+        self._handlers.append(handler)
+
+    def call(self, f, message):
+        if message is None:
+            f(self._sender)
+        else:
+            f(self._sender, message)
 
     def happen(self, message=None):
-        for h in self.__handlers:
-            if message is None:
-                h(self.__sender)
-            else:
-                h(self.__sender, message)
+        for h in self._handlers:
+            self.call(h, message)
 
 
 class timer:
@@ -98,3 +101,24 @@ def handle(*events: event):
         return wrapper
 
     return decorator
+
+
+def event_filter(filter_failed):
+    def _event_filter(*my_filters):
+        def decorator(f):
+            @functools.wraps(f)
+            def wrapper(obj, message):
+                success = True
+                for fl in my_filters:
+                    success &= fl(message)
+
+                if success:
+                    return f(obj, message)
+                else:
+                    return filter_failed(obj, message)
+
+            return wrapper
+
+        return decorator
+
+    return _event_filter
