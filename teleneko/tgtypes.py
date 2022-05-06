@@ -29,6 +29,10 @@ class tgtype:
                     self.__dict__[name] = e(val)
                     break
 
+        for name, val in self.__dict__.items():
+            if val is None:
+                self.__dict__.pop(name)
+
     def __tree__(self, offset=""):
         s = ""
         for x, y in self.__dict__.items():
@@ -70,9 +74,16 @@ class Chat(tgtype): pass
 
 
 class Message(tgtype):
+
+    def __init__(self, json_info=None):
+        self.text = None
+        self.chat = None
+
+        super().__init__(json_info)
+
     @staticmethod
-    def type_filter(message_type):
-        def returned_filter(message):
+    def is_type_of(message_type):
+        def returned_filter(message: Message):
             if type(message_type) is str:
                 message_type_copy = [message_type]
             else:
@@ -88,6 +99,33 @@ class Message(tgtype):
 
     @staticmethod
     def contain_command(command):
+        def returned_filter(message: Message):
+            contained_command = dict()
+            if hasattr(message, 'entities'):
+                for e in message.entities:
+                    if e.type == 'bot_command':
+                        contained_command[message.text[e.offset:e.offset + e.length]] = True
+            else:
+                return False
+
+            if not (type(command) is list):
+                _command = [command]
+            else:
+                _command = command
+            for com in _command:
+                if contained_command.get(com) is not None:
+                    return True
+
+            return False
+
+        return returned_filter
+
+    @staticmethod
+    def is_reply(user: User):
+        pass
+
+    @staticmethod
+    def is_mention(user: User):
         pass
 
 

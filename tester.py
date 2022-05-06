@@ -1,6 +1,7 @@
-import teleneko.globe
+import teleneko
 from teleneko import bot
 from teleneko import handle, event_filter
+from teleneko import Message
 
 teleneko.set_debug(True)
 
@@ -9,6 +10,6 @@ sampleNeko = bot(open('mytoken.txt', "r").read().strip(), proxy="http://localhos
 
 
 @handle(sampleNeko.received_message)
-@event_filter(teleneko.Message.type_filter('text'))
-def qwq(Neko, message: teleneko.Message):
-    print(message)
+@event_filter(Message.is_type_of('text'), Message.contain_command('/hello'))
+def qwq(Neko: bot, message: Message):
+    Neko.sendMessage(message.chat.id, "Hello World")

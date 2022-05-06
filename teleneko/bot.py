@@ -111,3 +111,9 @@ class bot(basic_bot):
             pass
         if type(content) is ChatMemberUpdated:
             pass
+
+    def is_reply_me(self, message: Message):
+        return Message.is_reply(self.me)(message)
+
+    def is_mention_me(self, message: Message):
+        return Message.is_mention(self.me)(message)
