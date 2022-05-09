@@ -1,7 +1,7 @@
+__all__ = ['basic_bot']
+
 from .tgtypes import *
 from .globe import *
-
-__all__ = ['basic_bot']
 
 
 def _log_api(message, *args):

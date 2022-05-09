@@ -1,6 +1,20 @@
-from .tgtypes import *
+__all__ = [
+    'UpdateFilter',
+    'MessageFilter',
+    'InlineQueryFilter',
+    'ChosenInlineResultFilter',
+    'CallbackQueryFilter',
+    'ShippingQueryFilter',
+    'PreCheckoutQueryFilter',
+    'PollFilter',
+    'PollAnswerFilter',
+    'ChatMemberUpdatedFilter',
+    'ChatJoinRequestFilter',
+    'ChatFilter',
+    'UserFilter'
+]
 
-__all__ = ['MessageFilter']
+from .tgtypes import *
 
 
 class MessageFilter:
@@ -57,4 +71,44 @@ class UserFilter:
 
 
 class ChatFilter:
+    pass
+
+
+class InlineQueryFilter:
+    pass
+
+
+class ChosenInlineResultFilter:
+    pass
+
+
+class CallbackQueryFilter:
+    pass
+
+
+class ShippingQueryFilter:
+    pass
+
+
+class PreCheckoutQueryFilter:
+    pass
+
+
+class PollFilter:
+    pass
+
+
+class PollAnswerFilter:
+    pass
+
+
+class ChatMemberUpdatedFilter:
+    pass
+
+
+class ChatJoinRequestFilter:
+    pass
+
+
+class UpdateFilter:
     pass

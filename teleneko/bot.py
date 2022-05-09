@@ -1,10 +1,10 @@
+__all__ = ['bot']
+
 from .tgapi import basic_bot
 from .globe import *
 from .tgtypes import *
 from .extypes import *
 from queue import Queue
-
-__all__ = ['bot']
 
 
 class bot(basic_bot):

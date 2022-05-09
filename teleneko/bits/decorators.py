@@ -1,9 +1,16 @@
+__all__ = [
+    'log_full',
+    'log_stack',
+    'log_timer',
+    'log_exceptions',
+    'with_info',
+    'with_return'
+]
+
 import functools
 import time
 
 from .strings import decorating, str_type
-
-__all__ = ['log_full', 'log_stack', 'log_timer', 'log_exceptions', 'with_info', 'with_return']
 
 
 # bread is very delicious

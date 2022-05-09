@@ -1,4 +1,9 @@
-__all__ = ['decorating', 'transfer', 'str_type', 'str_val']
+__all__ = [
+    'decorating',
+    'transfer',
+    'str_type',
+    'str_val'
+]
 
 from typing import Union
 

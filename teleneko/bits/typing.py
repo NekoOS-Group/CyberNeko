@@ -18,6 +18,8 @@
   #
 """
 
+__all__ = ['isType', 'isTypeof', 'typeOf', 'translate']
+
 
 def isType(_type) -> bool:
     if type(_type) == type:

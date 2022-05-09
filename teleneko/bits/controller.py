@@ -1,8 +1,8 @@
+__all__ = ['event', 'timer', 'handle', 'event_filter']
+
 import functools
 import threading
 import time
-
-__all__ = ['event', 'timer', 'handle', 'event_filter']
 
 
 class event:
