@@ -1,8 +1,8 @@
 import logging
 
-import teleneko.bits.decorators as decorators
-import teleneko.bits.controller as controller
-from teleneko.bits.strings import decorating
+from .bits import decorators
+from .bits import controller
+from .bits.strings import decorating
 
 
 def __message_with_object(message, *args):

@@ -1,7 +1,10 @@
-from teleneko.tgapi import basic_bot
-from teleneko.tgtypes import *
-from teleneko.globe import *
+from .tgapi import basic_bot
+from .globe import *
+from .tgtypes import *
+from .extypes import *
 from queue import Queue
+
+__all__ = ['bot']
 
 
 class bot(basic_bot):
@@ -113,7 +116,7 @@ class bot(basic_bot):
             pass
 
     def is_reply_me(self, message: Message):
-        return Message.is_reply(self.me)(message)
+        return MessageFilter.is_reply(self.me)(message)
 
     def is_mention_me(self, message: Message):
-        return Message.is_mention(self.me)(message)
+        return MessageFilter.is_mention(self.me)(message)

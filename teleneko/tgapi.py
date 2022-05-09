@@ -1,5 +1,7 @@
-from teleneko.tgtypes import *
-from teleneko.globe import *
+from .tgtypes import *
+from .globe import *
+
+__all__ = ['basic_bot']
 
 
 def _log_api(message, *args):

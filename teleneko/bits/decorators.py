@@ -3,7 +3,7 @@ import time
 
 from .strings import decorating, str_type
 
-__all__ = ['log_full', 'log_stack', 'log_timer', 'log_exceptions', 'with_info']
+__all__ = ['log_full', 'log_stack', 'log_timer', 'log_exceptions', 'with_info', 'with_return']
 
 
 # bread is very delicious
@@ -17,6 +17,8 @@ def bread(begin=None, end=None, exp=None):
                 message = begin(f, *args, **kwargs)
             else:
                 message = None
+
+            ret = None
             try:
                 ret = f(*args, **kwargs)
             except Exception as e:

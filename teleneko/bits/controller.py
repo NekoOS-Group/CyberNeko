@@ -103,7 +103,7 @@ def handle(*events: event):
     return decorator
 
 
-def event_filter(filter_failed):
+def event_filter(filter_failed_handler):
     def _event_filter(*my_filters):
         def decorator(f):
             @functools.wraps(f)
@@ -115,7 +115,7 @@ def event_filter(filter_failed):
                 if success:
                     return f(obj, message)
                 else:
-                    return filter_failed(obj, message)
+                    return filter_failed_handler(obj, message)
 
             return wrapper
 
