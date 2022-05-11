@@ -185,7 +185,13 @@ class Update(tgtype): pass
 class WebhookInfo(tgtype): pass
 
 
-class User(tgtype): pass
+class User(tgtype):
+    def __init__(self, json_info=None):
+        self.username = None
+        self.id = None
+        super().__init__(json_info)
+
+    pass
 
 
 class Chat(tgtype): pass

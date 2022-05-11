@@ -18,7 +18,23 @@
   #
 """
 
-__all__ = ['isType', 'isTypeof', 'typeOf', 'translate']
+from typing import Any, Type, Callable, Union, Optional, Literal, List, NoReturn, TypeVar, ParamSpec, TypeAlias
+
+
+def single_or_list_of(_type: type) -> TypeAlias:
+    return Union[type, list[type]]
+
+
+def filter_of(_type: type) -> TypeAlias:
+    return Callable[[type], bool]
+
+
+def handler_of(_type: type) -> TypeAlias:
+    return Callable[[type], NoReturn]
+
+
+T = TypeVar('T')
+P = ParamSpec('P')
 
 
 def isType(_type) -> bool:
@@ -43,18 +59,18 @@ def isType(_type) -> bool:
     return flag
 
 
-def isTypeof(val, _type) -> bool:
+def isTypeof(val: Any, _type) -> bool:
     if not isType(_type):
         raise Exception("Invalid type")
 
     pass
 
 
-def typeOf(val):
+def typeOf(val: Any):
     pass
 
 
-def translate(val, _type):
+def translate(val: Any, _type):
     if not isTypeof(val, _type):
         raise Exception("Type mismatch")
 

@@ -15,55 +15,90 @@ __all__ = [
 ]
 
 from .tgtypes import *
+from .bits.typing import *
+from .bits import ultility
 
 
 class MessageFilter:
     @staticmethod
-    def is_type_of(message_type):
-        def returned_filter(message: Message):
-            if type(message_type) is str:
-                message_type_copy = [message_type]
-            else:
-                message_type_copy = message_type
-
-            for item in message_type_copy:
-                if hasattr(message, item):
-                    return True
-
-            return False
+    def is_type_of(
+            message_type: single_or_list_of(str)
+    ) -> filter_of(Message):
+        """"""
+        def returned_filter(
+                message: Message
+        ) -> bool:
+            """"""
+            return ultility.exist(
+                ultility.make_list(message_type),
+                lambda x: hasattr(message, x)
+            )
 
         return returned_filter
 
     @staticmethod
-    def contain_command(command):
-        def returned_filter(message: Message):
+    def contain_command(
+            command: single_or_list_of(str)
+    ) -> filter_of(Message):
+        """"""
+        def returned_filter(
+                message: Message
+        ) -> bool:
+            """"""
             contained_command = dict()
             if hasattr(message, 'entities'):
-                for e in message.entities:
-                    if e.type == 'bot_command':
-                        contained_command[message.text[e.offset:e.offset + e.length]] = True
+                for e in filter(lambda x: x.type == 'bot_command', message.entities):
+                    contained_command[message.text[e.offset:e.offset + e.length]] = True
             else:
                 return False
 
-            if not (type(command) is list):
-                _command = [command]
-            else:
-                _command = command
-            for com in _command:
-                if contained_command.get(com) is not None:
-                    return True
+            print( ultility.make_list(command))
 
-            return False
+            return ultility.exist(
+                ultility.make_list(command),
+                lambda x: contained_command.get(x) is not None
+            )
 
         return returned_filter
 
     @staticmethod
-    def is_reply(user: User):
-        pass
+    def is_reply(
+            user: single_or_list_of(Union[int, User])
+    ) -> filter_of(Message):
+        """"""
+        def returned_filter(
+                message: Message
+        ) -> bool:
+            """"""
+            if hasattr(message, 'reply_to_message'):
+                pass
+            user_copy = ultility.make_list(user)
+            pass
+
+        return returned_filter
 
     @staticmethod
-    def is_mention(user: User):
-        pass
+    def is_mention(
+            user: single_or_list_of(Union[str, User])
+    ) -> filter_of(Message):
+        """"""
+        def returned_filter(
+                message: Message
+        ) -> bool:
+            """"""
+            contained_command = dict()
+            if hasattr(message, 'entities'):
+                for e in filter(lambda x: x.type == 'mention', message.entities):
+                    contained_command[message.text[e.offset:e.offset + e.length]] = True
+            else:
+                return False
+
+            return ultility.exist(
+                map(lambda x: (x.username if isinstance(x, User) else x), ultility.make_list(user)),
+                lambda x: contained_command.get(x) is not None
+            )
+
+        return returned_filter
 
 
 class UserFilter:

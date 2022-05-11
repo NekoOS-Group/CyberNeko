@@ -5,10 +5,14 @@ __all__ = [
     'str_val'
 ]
 
-from typing import Union
+from .typing import *
 
 
-def decorating(x: str, command: Union[int, str] = 30, default: Union[int, str] = 37):
+def decorating(
+        x: str,
+        command: Union[int, str] = 30,
+        default: Union[int, str] = 37
+) -> str:
     """Make string colorful
 
     Args:
@@ -22,7 +26,9 @@ def decorating(x: str, command: Union[int, str] = 30, default: Union[int, str] =
     return f"\033[{str(command)}m{x}\033[{str(default)}m"
 
 
-def transfer(x):
+def transfer(
+        x: str
+) -> str:
     """replace special character to escape character
 
     Args:
@@ -45,7 +51,10 @@ def transfer(x):
     return x
 
 
-def str_type(x, origin: bool = False):
+def str_type(
+        x: Any,
+        origin: bool = False
+) -> str:
     """detect the type of x and return a printable string
 
     Args:
@@ -71,7 +80,9 @@ def str_type(x, origin: bool = False):
     return s
 
 
-def str_val(x):
+def str_val(
+        x: Any
+) -> str:
     """
     If x is a string, then return string 'x' with color 33.
 
