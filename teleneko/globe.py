@@ -65,7 +65,7 @@ class event(controller.event):
         super(event, self).happen(message)
 
     def call(self, f, message):
-        log_debug(f"recalling function<{f.__name__}>")
+        log_debug(f"try to recall function<{f.__name__}>")
         super(event, self).call(f, message)
 
 
@@ -79,12 +79,8 @@ class timer(controller.timer):
         super(timer, self).stop()
 
 
-def __log_filter_failed(obj, message):
-    log_debug("<event_filter> : skipped")
-
-
 handle = controller.handle
-event_filter = controller.event_filter(__log_filter_failed)
+event_filter = controller.event_filter(log_debug)
 
 
 # decorate functions from poster.py

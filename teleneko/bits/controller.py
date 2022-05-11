@@ -103,19 +103,21 @@ def handle(*events: event):
     return decorator
 
 
-def event_filter(filter_failed_handler):
+def event_filter(message_handler):
     def _event_filter(*my_filters):
         def decorator(f):
             @functools.wraps(f)
             def wrapper(obj, message):
                 success = True
                 for fl in my_filters:
+                    message_handler(f"....try on filter<{fl.__name__}>")
                     success &= fl(message)
 
                 if success:
+                    message_handler(f"....success")
                     return f(obj, message)
                 else:
-                    return filter_failed_handler(obj, message)
+                    message_handler(f"....failed and skip")
 
             return wrapper
 

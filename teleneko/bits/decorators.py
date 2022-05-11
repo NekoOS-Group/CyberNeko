@@ -71,9 +71,9 @@ def log_enter(
     return log_debug
 
 
-
 def add_logging(f: Callable[P, T]) -> Callable[P, T]:
-    '''A type-safe decorator to add logging to a function.'''
+    """A type-safe decorator to add logging to a function."""
+
     def inner(*args: P.args, **kwargs: P.kwargs) -> T:
         return f(*args, **kwargs)
 

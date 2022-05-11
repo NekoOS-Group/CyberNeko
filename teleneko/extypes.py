@@ -16,6 +16,7 @@ __all__ = [
 
 from .tgtypes import *
 from .bits.typing import *
+from .bits.strings import *
 from .bits import ultility
 
 
@@ -34,6 +35,7 @@ class MessageFilter:
                 lambda x: hasattr(message, x)
             )
 
+        returned_filter.__name__ = f"MessageFilter.is_type_of({str_val(message_type)})"
         return returned_filter
 
     @staticmethod
@@ -52,13 +54,12 @@ class MessageFilter:
             else:
                 return False
 
-            print( ultility.make_list(command))
-
             return ultility.exist(
                 ultility.make_list(command),
                 lambda x: contained_command.get(x) is not None
             )
 
+        returned_filter.__name__ = f"MessageFilter.contain_command({str_val(command)})"
         return returned_filter
 
     @staticmethod
@@ -70,11 +71,18 @@ class MessageFilter:
                 message: Message
         ) -> bool:
             """"""
+            contained_reply = None
             if hasattr(message, 'reply_to_message'):
-                pass
-            user_copy = ultility.make_list(user)
-            pass
+                contained_reply = message.reply_to_message.__dict__['from'].username
+            else:
+                return False
 
+            return ultility.exist(
+                map(lambda x: (x.username if isinstance(x, User) else x), ultility.make_list(user)),
+                lambda x: contained_reply == x
+            )
+
+        returned_filter.__name__ = f"MessageFilter.is_reply({str_val(user, True)})"
         return returned_filter
 
     @staticmethod
@@ -86,18 +94,19 @@ class MessageFilter:
                 message: Message
         ) -> bool:
             """"""
-            contained_command = dict()
+            contained_mention = dict()
             if hasattr(message, 'entities'):
                 for e in filter(lambda x: x.type == 'mention', message.entities):
-                    contained_command[message.text[e.offset:e.offset + e.length]] = True
+                    contained_mention[message.text[e.offset+1:e.offset + e.length]] = True
             else:
                 return False
 
             return ultility.exist(
                 map(lambda x: (x.username if isinstance(x, User) else x), ultility.make_list(user)),
-                lambda x: contained_command.get(x) is not None
+                lambda x: contained_mention.get(x) is not None
             )
 
+        returned_filter.__name__ = f"MessageFilter.is_mention({str_val(user, True)})"
         return returned_filter
 
 

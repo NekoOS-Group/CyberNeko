@@ -191,7 +191,8 @@ class User(tgtype):
         self.id = None
         super().__init__(json_info)
 
-    pass
+    def __repr__(self):
+        return f"User<{self.username}>"
 
 
 class Chat(tgtype): pass

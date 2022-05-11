@@ -81,7 +81,8 @@ def str_type(
 
 
 def str_val(
-        x: Any
+        x: Any,
+        origin: bool = False
 ) -> str:
     """
     If x is a string, then return string 'x' with color 33.
@@ -89,12 +90,15 @@ def str_val(
     Others return x.__str__()
 
     Args:
+        origin:
         x: input object
 
     Returns:
         string format of x
 
     """
+    if origin:
+        return repr(x)
     s = str(x)
     if isinstance(x, str):
         s = decorating("'" + transfer(s) + "'", 33)
