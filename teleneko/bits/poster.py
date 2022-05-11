@@ -55,5 +55,5 @@ def verify_params(params_table, params):
             if isinstance(y, t):
                 break
         else:
-            raise Exception(f"For param '{str(need)}' need, but {str(type(y))} given")
+            raise Exception(f"For param '{x}', {str(need)} need, but {str(type(y))} given")
     return True

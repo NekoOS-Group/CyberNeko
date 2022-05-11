@@ -11,13 +11,33 @@ __all__ = [
     'ChatMemberUpdatedFilter',
     'ChatJoinRequestFilter',
     'ChatFilter',
-    'UserFilter'
+    'UserFilter',
+    'MessageTool'
 ]
+
+import functools
 
 from .tgtypes import *
 from .bits.typing import *
 from .bits.strings import *
 from .bits import ultility
+
+
+class BasicFilter:
+    @staticmethod
+    def by_val(
+            accepted_val: Any
+    ) -> filter_of(Any):
+        inner_set = {val: True for val in ultility.make_list(accepted_val)}
+        """"""
+
+        def returned_filter(
+                input_val: Any
+        ) -> bool:
+            """"""
+            return inner_set.get(input_val) is not None
+
+        return returned_filter
 
 
 class MessageFilter:
@@ -26,6 +46,7 @@ class MessageFilter:
             message_type: single_or_list_of(str)
     ) -> filter_of(Message):
         """"""
+
         def returned_filter(
                 message: Message
         ) -> bool:
@@ -43,6 +64,8 @@ class MessageFilter:
             command: single_or_list_of(str)
     ) -> filter_of(Message):
         """"""
+        inner_filter = BasicFilter.by_val(command)
+
         def returned_filter(
                 message: Message
         ) -> bool:
@@ -54,10 +77,7 @@ class MessageFilter:
             else:
                 return False
 
-            return ultility.exist(
-                ultility.make_list(command),
-                lambda x: contained_command.get(x) is not None
-            )
+            return ultility.exist(contained_command, inner_filter)
 
         returned_filter.__name__ = f"MessageFilter.contain_command({str_val(command)})"
         return returned_filter
@@ -67,6 +87,8 @@ class MessageFilter:
             user: single_or_list_of(Union[int, User])
     ) -> filter_of(Message):
         """"""
+        inner_filter = UserFilter.by_username(user)
+
         def returned_filter(
                 message: Message
         ) -> bool:
@@ -77,10 +99,7 @@ class MessageFilter:
             else:
                 return False
 
-            return ultility.exist(
-                map(lambda x: (x.username if isinstance(x, User) else x), ultility.make_list(user)),
-                lambda x: contained_reply == x
-            )
+            return inner_filter(contained_reply)
 
         returned_filter.__name__ = f"MessageFilter.is_reply({str_val(user, True)})"
         return returned_filter
@@ -90,28 +109,80 @@ class MessageFilter:
             user: single_or_list_of(Union[str, User])
     ) -> filter_of(Message):
         """"""
+        inner_filter = UserFilter.by_username(user)
+
         def returned_filter(
                 message: Message
         ) -> bool:
             """"""
-            contained_mention = dict()
+            contained_mention = []
             if hasattr(message, 'entities'):
                 for e in filter(lambda x: x.type == 'mention', message.entities):
-                    contained_mention[message.text[e.offset+1:e.offset + e.length]] = True
+                    contained_mention.append(message.text[e.offset + 1:e.offset + e.length])
             else:
                 return False
 
-            return ultility.exist(
-                map(lambda x: (x.username if isinstance(x, User) else x), ultility.make_list(user)),
-                lambda x: contained_mention.get(x) is not None
-            )
+            return ultility.exist(contained_mention, inner_filter)
 
         returned_filter.__name__ = f"MessageFilter.is_mention({str_val(user, True)})"
         return returned_filter
 
+    @staticmethod
+    def is_from(
+            user: single_or_list_of(Union[str, User])
+    ) -> filter_of(Message):
+        """"""
+        inner_filter = UserFilter.by_username(user)
+
+        def returned_filter(
+                message: Message
+        ) -> bool:
+            """"""
+            if hasattr(message, 'from'):
+                return inner_filter(message.__dict__['from'])
+            else:
+                return False
+
+        returned_filter.__name__ = f"MessageFilter.is_from({str_val(user, True)})"
+        return returned_filter
+
 
 class UserFilter:
-    pass
+    @staticmethod
+    def by_username(
+            name: single_or_list_of(Union[User, str])
+    ) -> filter_of(Union[User, str]):
+        """"""
+        inner_filter = BasicFilter.by_val(
+            [x.username if isinstance(x, User) else x for x in ultility.make_list(name)]
+        )
+
+        def returned_filter(
+                user: Union[User, str]
+        ) -> bool:
+            """"""
+            return inner_filter(user)
+
+        returned_filter.__name__ = f"UserFilter.by_username({str_val(name, True)})"
+        return returned_filter
+
+    @staticmethod
+    def by_id(
+            user_id: single_or_list_of(Union[User, int])
+    ) -> filter_of(Union[User, str]):
+        """"""
+        inner_filter = BasicFilter.by_val(
+            [x.id if isinstance(x, User) else x for x in ultility.make_list(user_id)]
+        )
+
+        def returned_filter(
+                user: Union[User, str]
+        ) -> bool:
+            """"""
+            return inner_filter(user)
+
+        returned_filter.__name__ = f"UserFilter.by_id({str_val(user_id, True)})"
+        return returned_filter
 
 
 class ChatFilter:
@@ -156,3 +227,15 @@ class ChatJoinRequestFilter:
 
 class UpdateFilter:
     pass
+
+
+class MessageTool:
+    @staticmethod
+    def get_pure_text(message: Message):
+        assert MessageFilter.is_type_of('text')(message)
+        text = list(message.text)
+        if hasattr(message, 'entities'):
+            for e in message.entities:
+                for i in range(e.offset, e.offset + e.length):
+                    text[i] = ''
+        return functools.reduce(lambda x, y: x + y, text)

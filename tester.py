@@ -1,7 +1,7 @@
 import teleneko
 from teleneko import bot
 from teleneko import handle, event_filter
-from teleneko import Message, MessageFilter
+from teleneko import Message, MessageFilter, MessageTool
 
 teleneko.set_debug(True)
 
@@ -16,12 +16,18 @@ def qwq(Neko: bot, message: Message):
 
 
 @handle(sampleNeko.received_message)
-@event_filter(MessageFilter.is_mention(sampleNeko.me))
+@event_filter(sampleNeko.is_mention_me)
 def qaq(Neko: bot, message: Message):
     Neko.sendMessage(message.chat.id, "咬你哦")
 
 
 @handle(sampleNeko.received_message)
-@event_filter(MessageFilter.is_reply(sampleNeko.me))
+@event_filter(sampleNeko.is_reply_me)
 def qaq(Neko: bot, message: Message):
     Neko.sendMessage(message.chat.id, "咬你哦")
+
+
+@handle(sampleNeko.received_message)
+@event_filter(MessageFilter.contain_command("/python"))
+def python(Neko: bot, message: Message):
+    Neko.sendMessage(message.chat.id, str(eval(MessageTool.get_pure_text(message))))
