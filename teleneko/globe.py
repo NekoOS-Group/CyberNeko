@@ -113,6 +113,6 @@ def find_bot_by_name(name: str):
 
 def terminal():
     bot_mainloop.stop()
-    for name, bot in bot_namelist:
+    for name, bot in bot_namelist.items():
         bot.shutdown()
     bot_namelist.clear()

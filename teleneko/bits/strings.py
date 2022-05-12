@@ -2,10 +2,12 @@ __all__ = [
     'decorating',
     'transfer',
     'str_type',
-    'str_val'
+    'str_val',
+    'refresh_decorator'
 ]
 
 from .typing import *
+import re
 
 
 def decorating(
@@ -24,6 +26,12 @@ def decorating(
          decorated string
     """
     return f"\033[{str(command)}m{x}\033[{str(default)}m"
+
+
+def refresh_decorator(
+        x: str
+) -> str:
+    return re.sub('\033\\[[0-9;]*m', "", x, count=0, flags=0)
 
 
 def transfer(

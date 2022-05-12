@@ -5,6 +5,7 @@ __all__ = [
 
 import requests
 import json
+from . import ultility
 
 
 def post(url: str, params=None, proxy=None):
@@ -47,13 +48,12 @@ def verify_params(params_table, params):
         Exception1: Invalid param
         Exception2: Invalid type
     """
-    for x, y in params.items():
-        if params_table[x] is None:
-            raise Exception(f"Invalid param : '{x}'")
-        need = [params_table[x]] if isinstance(params_table[x], type) else params_table[x]
-        for t in need:
-            if isinstance(y, t):
-                break
-        else:
-            raise Exception(f"For param '{x}', {str(need)} need, but {str(type(y))} given")
+    for arg_name, arg_val in params.items():
+        if params_table[arg_name] is None:
+            raise Exception(f"Invalid param : '{arg_name}'")
+        arg_type = ultility.make_list(params_table[arg_name])
+        if ultility.exist(arg_type, lambda _: isinstance(arg_val, _)):
+            continue
+        raise Exception(f"For param '{arg_name}', {str(params_table[arg_name])} need, but {str(type(arg_val))} given")
+
     return True

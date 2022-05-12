@@ -26,14 +26,15 @@ from .bits import ultility
 class BasicFilter:
     @staticmethod
     def by_val(
-            accepted_val: Any
+            *accepted_val: Any
     ) -> filter_of(Any):
-        inner_set = {val: True for val in ultility.make_list(accepted_val)}
         """"""
+        inner_set = {val: True for val in accepted_val}
 
         def returned_filter(
                 input_val: Any
         ) -> bool:
+            # print(input_val, accepted_val)
             """"""
             return inner_set.get(input_val) is not None
 
@@ -43,7 +44,7 @@ class BasicFilter:
 class MessageFilter:
     @staticmethod
     def is_type_of(
-            message_type: single_or_list_of(str)
+            *message_type: str
     ) -> filter_of(Message):
         """"""
 
@@ -52,7 +53,7 @@ class MessageFilter:
         ) -> bool:
             """"""
             return ultility.exist(
-                ultility.make_list(message_type),
+                message_type,
                 lambda x: hasattr(message, x)
             )
 
@@ -61,10 +62,10 @@ class MessageFilter:
 
     @staticmethod
     def contain_command(
-            command: single_or_list_of(str)
+            *command: str
     ) -> filter_of(Message):
         """"""
-        inner_filter = BasicFilter.by_val(command)
+        inner_filter = BasicFilter.by_val(*command)
 
         def returned_filter(
                 message: Message
@@ -84,32 +85,29 @@ class MessageFilter:
 
     @staticmethod
     def is_reply(
-            user: single_or_list_of(Union[int, User])
+            *user: Union[int, User]
     ) -> filter_of(Message):
         """"""
-        inner_filter = UserFilter.by_username(user)
+        inner_filter = UserFilter.by_username(*user)
 
         def returned_filter(
                 message: Message
         ) -> bool:
             """"""
-            contained_reply = None
             if hasattr(message, 'reply_to_message'):
-                contained_reply = message.reply_to_message.__dict__['from'].username
+                return inner_filter(message.reply_to_message.__dict__['from'].username)
             else:
                 return False
-
-            return inner_filter(contained_reply)
 
         returned_filter.__name__ = f"MessageFilter.is_reply({str_val(user, True)})"
         return returned_filter
 
     @staticmethod
     def is_mention(
-            user: single_or_list_of(Union[str, User])
+            *user: Union[str, User]
     ) -> filter_of(Message):
         """"""
-        inner_filter = UserFilter.by_username(user)
+        inner_filter = UserFilter.by_username(*user)
 
         def returned_filter(
                 message: Message
@@ -129,16 +127,17 @@ class MessageFilter:
 
     @staticmethod
     def is_from(
-            user: single_or_list_of(Union[str, User])
+            *user: Union[str, User]
     ) -> filter_of(Message):
         """"""
-        inner_filter = UserFilter.by_username(user)
+        inner_filter = UserFilter.by_username(*user)
 
         def returned_filter(
                 message: Message
         ) -> bool:
             """"""
             if hasattr(message, 'from'):
+                # print(message.__dict__['from'], user)
                 return inner_filter(message.__dict__['from'])
             else:
                 return False
@@ -150,36 +149,36 @@ class MessageFilter:
 class UserFilter:
     @staticmethod
     def by_username(
-            name: single_or_list_of(Union[User, str])
+            *name: Union[User, str]
     ) -> filter_of(Union[User, str]):
         """"""
         inner_filter = BasicFilter.by_val(
-            [x.username if isinstance(x, User) else x for x in ultility.make_list(name)]
+            *[(x.username if isinstance(x, User) else x) for x in name]
         )
 
         def returned_filter(
                 user: Union[User, str]
         ) -> bool:
             """"""
-            return inner_filter(user)
+            return inner_filter(user.username if isinstance(user, User) else user)
 
         returned_filter.__name__ = f"UserFilter.by_username({str_val(name, True)})"
         return returned_filter
 
     @staticmethod
     def by_id(
-            user_id: single_or_list_of(Union[User, int])
+            *user_id: Union[User, int]
     ) -> filter_of(Union[User, str]):
         """"""
         inner_filter = BasicFilter.by_val(
-            [x.id if isinstance(x, User) else x for x in ultility.make_list(user_id)]
+            *[(x.id if isinstance(x, User) else x) for x in user_id]
         )
 
         def returned_filter(
                 user: Union[User, str]
         ) -> bool:
             """"""
-            return inner_filter(user)
+            return inner_filter(user.id if isinstance(user, User) else user)
 
         returned_filter.__name__ = f"UserFilter.by_id({str_val(user_id, True)})"
         return returned_filter

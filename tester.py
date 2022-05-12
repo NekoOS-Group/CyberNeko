@@ -2,7 +2,7 @@ import teleneko
 from teleneko import bot
 from teleneko import handle, event_filter
 from teleneko import Message, MessageFilter, MessageTool
-
+from teleneko.bits.strings import refresh_decorator
 teleneko.set_debug(True)
 
 # proxy, name are optional
@@ -10,24 +10,15 @@ sampleNeko = bot(open('mytoken.txt', "r").read().strip(), proxy="http://localhos
 
 
 @handle(sampleNeko.received_message)
-@event_filter(MessageFilter.is_type_of('text'), MessageFilter.contain_command('/hello'))
-def qwq(Neko: bot, message: Message):
-    Neko.sendMessage(message.chat.id, "Hello World")
-
-
-@handle(sampleNeko.received_message)
-@event_filter(sampleNeko.is_mention_me)
-def qaq(Neko: bot, message: Message):
-    Neko.sendMessage(message.chat.id, "咬你哦")
-
-
-@handle(sampleNeko.received_message)
-@event_filter(sampleNeko.is_reply_me)
-def qaq(Neko: bot, message: Message):
-    Neko.sendMessage(message.chat.id, "咬你哦")
-
-
-@handle(sampleNeko.received_message)
-@event_filter(MessageFilter.contain_command("/python"))
+@event_filter(MessageFilter.contain_command("/python"), MessageFilter.is_from("atCamber", "Telebzy"))
 def python(Neko: bot, message: Message):
-    Neko.sendMessage(message.chat.id, str(eval(MessageTool.get_pure_text(message))))
+    try:
+        Neko.sendMessage(message.chat.id, refresh_decorator(str(eval(MessageTool.get_pure_text(message)))))
+    except:
+        Neko.sendMessage(message.chat.id, "猫猫爆炸")
+
+
+@handle(sampleNeko.received_message)
+@event_filter(MessageFilter.contain_command("/exit"), MessageFilter.is_from("atCamber", "Telebzy"))
+def python(Neko: bot, message: Message):
+    teleneko.terminal()

@@ -15,12 +15,12 @@ def _log_api(message, *args):
 class basic_bot:
     @log_exceptions
     def __init__(self, token, proxy="", name: str = None):
+        if name is None:
+            name = hex(id(self))
+
         self.__token = token
         self.__proxy = {'https': proxy, 'http': proxy}
         self.__name = name
-
-        if name is None:
-            name = hex(id(self))
 
         if bot_namelist.get(name) is not None:
             raise Exception("Can't register bot in same name twice")
@@ -61,6 +61,10 @@ class basic_bot:
     @property
     def url(self):
         return f"https://api.telegram.org/bot{self.__token}/"
+
+    @property
+    def name(self):
+        return f"https://api.telegram.org/bot{self.__name}/"
 
     # API functions
     @with_return(User)
